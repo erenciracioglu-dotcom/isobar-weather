@@ -342,9 +342,9 @@ button.dc:hover{border-color:var(--line-2)}
 .act-best b{font-weight:700}
 .ab-row{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:3px;align-items:end;flex:1 1 auto;min-height:130px;max-height:312px;margin-top:12px;container-type:inline-size}
 .ab{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:3px;font-size:10px;color:var(--muted);min-width:0;background:none;border:0;padding:0}
-.ab i{width:100%;max-width:20px;border-radius:5px 5px 2px 2px;min-height:3px;display:block}
+.ab i{width:100%;max-width:20px;border-radius:5px 5px 2px 2px;min-height:3px;display:block;height:calc((100% - 48px) * var(--s, .04))} /* 48px: score, weekday and date lines */
 .ab em{font-style:normal;font-size:10.5px;font-weight:700;color:var(--text-2)}
-.ab em,.ab span,.ab small{flex:none} /* only the bar shrinks when a tall bar fills the column */
+.ab em,.ab span,.ab small{flex:none}
 .ab span{white-space:nowrap;overflow:hidden;max-width:100%}
 .ab small{font-size:9.5px;line-height:1.15;white-space:nowrap;font-variant-numeric:tabular-nums;opacity:.85;margin-top:-2px}
 /* too narrow for a date under every bar: date every other day, like the trend axis */
@@ -3260,7 +3260,7 @@ function renderActivities() {
   el.innerHTML = `<div class="card-h"><h2 class="card-t">${ui('calendar')}${esc(t('activities'))}</h2></div>
     <div class="chips" role="group" aria-label="${esc(t('activities'))}">${ACTIVITIES.map(a => `<button type="button" class="chip" data-act-id="${a.id}" aria-pressed="${a.id === A.id}">${ui(a.icon)}${esc(t('act_' + a.id))}</button>`).join('')}</div>
     <p class="act-best">${best && best.score > 0 ? `<b>${esc(t('bestTime'))}:</b> ` : ''}${esc(bestTxt)}</p>
-    <div class="ab-row" style="--n:${days.length}">${days.map(d => `<div class="ab${best && d.d === best.d && best.score > 0 ? ' best' : ''}" title="${esc(dayDate(o.d.t[d.d]))}: ${isNum(d.score) ? d.score + '/10' + (d.score > 0 ? ' · ' + fmtTime(d.start) + '–' + fmtTime(d.end) : '') : '–'}"><em>${isNum(d.score) ? d.score : ''}</em><i style="height:${isNum(d.score) ? Math.max(4, d.score * 10) : 4}%;background:${scoreColor(d.score)}"></i><span>${esc(wd2(o.d.t[d.d] + 6 * HOUR))}</span><small>${esc(fmtDM(o.d.t[d.d] + 6 * HOUR))}</small></div>`).join('')}</div>
+    <div class="ab-row" style="--n:${days.length}">${days.map(d => `<div class="ab${best && d.d === best.d && best.score > 0 ? ' best' : ''}" title="${esc(dayDate(o.d.t[d.d]))}: ${isNum(d.score) ? d.score + '/10' + (d.score > 0 ? ' · ' + fmtTime(d.start) + '–' + fmtTime(d.end) : '') : '–'}"><em>${isNum(d.score) ? d.score : ''}</em><i style="--s:${isNum(d.score) ? Math.max(0.04, d.score / 10) : 0.04};background:${scoreColor(d.score)}"></i><span>${esc(wd2(o.d.t[d.d] + 6 * HOUR))}</span><small>${esc(fmtDM(o.d.t[d.d] + 6 * HOUR))}</small></div>`).join('')}</div>
     <p class="act-note">${esc(t('actNote_' + A.id))}</p>`;
 }
 
