@@ -527,7 +527,7 @@ table.dt{border-collapse:separate;border-spacing:0;font:12.5px/1.25 var(--font-m
 .trend-lg{display:inline-flex;align-items:center;gap:5px 6px;font-size:11.5px;color:var(--muted);flex-wrap:wrap}
 .trend-lg i{display:inline-block;width:12px;height:3px;border-radius:2px;margin-left:6px}
 .trend-lg .lg-max{background:var(--c-temp)} .trend-lg .lg-min{background:var(--c-rain)} .trend-lg .lg-rain{background:var(--c-rain);opacity:.45;height:8px;width:8px}
-.trend{position:relative;flex:1 1 auto;min-height:150px;margin-top:6px}
+.trend{position:relative;flex:1 1 auto;min-height:164px;margin-top:6px}
 .trend svg{position:absolute;inset:0;display:block}
 .tr-grid{stroke:var(--grid);stroke-width:1}
 .tr-base{stroke:var(--line-2);stroke-width:1}
@@ -539,6 +539,7 @@ table.dt{border-collapse:separate;border-spacing:0;font:12.5px/1.25 var(--font-m
 .tr-dmin{fill:var(--surface);stroke:var(--c-rain);stroke-width:2}
 .tr-rain{fill:var(--c-rain);opacity:.5}
 .tr-ax,.tr-day{font:11px var(--font-body);fill:var(--muted)}
+.tr-date{font:10px var(--font-body);fill:var(--muted);opacity:.85;font-variant-numeric:tabular-nums}
 .tr-v{font:700 11px var(--font-body);fill:var(--text);font-variant-numeric:tabular-nums}
 .tr-vmin{fill:var(--text-2);font-weight:400}
 .tr-pv{font:700 10px var(--font-body);fill:var(--c-rain)}

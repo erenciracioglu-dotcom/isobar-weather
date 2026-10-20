@@ -204,6 +204,8 @@ const fmtWeekday = (ms, long) => TZ.f({ weekday: long ? 'long' : 'short' }).form
 const WD2 = { en: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'], tr: ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'] };
 const wd2 = ms => WD2[LANG][TZ.parts(ms).wd];
 const fmtDayMonth = ms => TZ.f({ day: 'numeric', month: 'short' }).format(ms);
+/* numeric day/month, e.g. 20/10, for chart axes */
+const fmtDM = ms => { const p = TZ.parts(ms); return String(p.d).padStart(2, '0') + '/' + String(p.m).padStart(2, '0'); };
 const fmtDate = ms => TZ.f({ weekday: 'short', day: 'numeric', month: 'short' }).format(ms);
 const fmtDateLong = ms => TZ.f({ weekday: 'long', day: 'numeric', month: 'long' }).format(ms);
 /* dayLabel: the local day that contains instant ms. dayName/dayDate: for a day-start instant (local midnight). */

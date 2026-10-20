@@ -240,16 +240,16 @@ const Trend = {
     const host = this.host, o = this.o, idx = this.idx; if (!host || !host.isConnected || !o) return;
     const W = host.clientWidth, Hh = host.clientHeight; if (W < 60 || Hh < 60) return;
     const D = o.d, n = idx.length; if (n < 2) { host.innerHTML = ''; return; }
-    const padL = 30, padR = 8, padT = 16, padB = 22, rainH = Math.min(70, Math.max(34, Hh * 0.24));
+    const padL = 30, padR = 8, padT = 16, padB = 36, rainH = Math.min(70, Math.max(34, Hh * 0.24));
     const plotW = W - padL - padR, step = plotW / n, X = k => padL + step * (k + 0.5);
-    const tTop = padT, tBot = Hh - padB - rainH - 10, rTop = tBot + 10, rBot = Hh - padB;
+    const tTop = padT, tBot = Hh - padB - rainH - 14, rTop = tBot + 14, rBot = Hh - padB;
     const hi = maxOf(pick(D.tmax, idx)), lo = minOf(pick(D.tmin, idx));
     const ticks = niceTicks(Units.t(lo), Units.t(hi), Math.max(2, Math.floor((tBot - tTop) / 40)));
     const yLo = Math.min(Units.t(lo), ticks[0]), yHi = Math.max(Units.t(hi), ticks[ticks.length - 1]);
     const Y = v => tBot - (Units.t(v) - yLo) / Math.max(0.1, yHi - yLo) * (tBot - tTop);
     const Yu = u => tBot - (u - yLo) / Math.max(0.1, yHi - yLo) * (tBot - tTop);
     const pmax = Math.max(5, maxOf(pick(D.precip, idx)) || 0);
-    const every = step >= 30 ? 1 : step >= 16 ? 2 : 3;
+    const every = step >= 32 ? 1 : step >= 16 ? 2 : 3;
     let g = '';
     for (const tv of ticks) { const y = Yu(tv); if (y < tTop - 1 || y > tBot + 1) continue; g += `<line class="tr-grid" x1="${padL}" x2="${W - padR}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}"/><text class="tr-ax" x="${padL - 6}" y="${(y + 3.5).toFixed(1)}" text-anchor="end">${esc(fmtN(tv, 0))}°</text>`; }
     idx.forEach((i, k) => { const wd = TZ.parts(D.t[i] + 12 * HOUR).wd; if (wd === 6 || wd === 0) g += `<rect class="tr-we" x="${(X(k) - step / 2).toFixed(1)}" y="${tTop - 6}" width="${step.toFixed(1)}" height="${(rBot - tTop + 6).toFixed(1)}"/>`; });
@@ -263,11 +263,14 @@ const Trend = {
       if (isNum(D.tmin[i])) { g += `<circle class="tr-dmin" cx="${x.toFixed(1)}" cy="${Y(D.tmin[i]).toFixed(1)}" r="2.6"/>`; if (k % every === 0) g += `<text class="tr-v tr-vmin" x="${x.toFixed(1)}" y="${(Y(D.tmin[i]) + 14).toFixed(1)}" text-anchor="middle">${esc(F.t(D.tmin[i]))}</text>`; }
       const p = D.precip[i];
       if (isNum(p) && p > 0.05) {
-        const bh = Math.max(2, p / pmax * (rBot - rTop - 12)), bw = Math.min(18, step * 0.55);
+        const bh = Math.max(2, p / pmax * (rBot - rTop - 16)), bw = Math.min(18, step * 0.55);
         g += `<rect class="tr-rain" x="${(x - bw / 2).toFixed(1)}" y="${(rBot - bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="2"/>`;
         if (p >= 1 && step >= 22) g += `<text class="tr-pv" x="${x.toFixed(1)}" y="${(rBot - bh - 3).toFixed(1)}" text-anchor="middle">${esc(fmtN(Units.p(p), S.units.precip === 'in' ? 1 : 0))}</text>`;
       }
-      if (k % every === 0) g += `<text class="tr-day" x="${x.toFixed(1)}" y="${Hh - 6}" text-anchor="middle">${esc(k === 0 && step * every >= 40 ? t('today') : step * every >= 30 ? fmtWeekday(D.t[i] + 6 * HOUR) : wd2(D.t[i] + 6 * HOUR))}</text>`;
+      if (k % every === 0) {
+        const ms = D.t[i] + 6 * HOUR, day = k === 0 && step * every >= 40 ? t('today') : step * every >= 30 ? fmtWeekday(ms) : wd2(ms);
+        g += `<text class="tr-day" x="${x.toFixed(1)}" y="${Hh - 20}" text-anchor="middle">${esc(day)}</text><text class="tr-date" x="${x.toFixed(1)}" y="${Hh - 6}" text-anchor="middle">${esc(fmtDM(ms))}</text>`;
+      }
     });
     g += `<line class="tr-base" x1="${padL}" x2="${W - padR}" y1="${rBot + 0.5}" y2="${rBot + 0.5}"/>`;
     host.innerHTML = `<svg width="${W}" height="${Hh}" viewBox="0 0 ${W} ${Hh}" aria-hidden="true">${g}</svg>`;
