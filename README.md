@@ -22,7 +22,7 @@ Isobar iki uygulamayı bir arada sunar: her gün bakılan sade bir hava uygulama
 - 48 saatlik saatlik akış
 - 15 gün: günlük liste ya da 3 saatlik ızgara. Izgaradaki her kutuda yağış ve rüzgâr var; kutuların renklerini ızgaranın hemen üstünden sıcaklığa, yağışa ya da rüzgâra göre seçebilirsiniz.
 - 15 günlük sıcaklık ve yağış eğrisi; en sıcak, en yağışlı ve en rüzgârlı günleri söyleyen bir özet
-- Etkinlik planlayıcı: koşu, bisiklet, yürüyüş, plaj, mangal, çamaşır kurutma, yıldız gözlemi ve drone uçuşu için en uygun saatler
+- Etkinlik planlayıcı: koşu, bisiklet, yürüyüş, sırt çantalı yürüyüş, kamp, plaj, mangal, çamaşır kurutma, yıldız gözlemi ve drone uçuşu için en uygun saatler (kamp için akşamdan sabaha en iyi gece)
 - Yer arama, favoriler ve paylaşılabilir bağlantı. Son tahminler cihazda saklanır; bağlantı koparsa son veri gösterilir.
 
 ### Gelişmiş mod
@@ -76,7 +76,7 @@ Isobar is two apps in one: a plain everyday weather app, and a panel for people 
 - A 48-hour hourly strip
 - 15 days as a daily list or a 3-hourly grid. Every cell of the grid shows rain and wind; a switch just above the grid colours the cells by temperature, rain or wind.
 - A 15-day temperature and rain chart, and an outlook that names the warmest, wettest and windiest days
-- Activity planner: the best hours for running, cycling, hiking, the beach, a barbecue, drying laundry, stargazing and drone flying
+- Activity planner: the best hours for running, cycling, hiking, a backpack trail, camping, the beach, a barbecue, drying laundry, stargazing and drone flying (for camping, the best night from evening to morning)
 - Place search, favourites and shareable links. Recent forecasts are kept on the device; if the connection drops, the last data is shown.
 
 ### Advanced mode

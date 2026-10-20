@@ -108,6 +108,7 @@ const MapView = {
           <div class="tslider" id="mapSlider"><input type="range" id="mapTime" min="0" max="0" value="0" step="1" aria-label="${esc(t('mapTime'))}"><div class="tticks" id="mapTicks"></div></div>
         </div>
         <p class="note">${esc(t('mapNote'))}</p>`;
+      ChipScroll.enhance($('#mapLayers'));
       if (this.map) { this.stopParticles(); this.stopPlay(); try { this.map.remove(); } catch (e) { /* ignore */ } this.map = null; this.field = null; this.base = null; this.baseKind = ''; this.labelsLayer = null; this.radarLayer = null; this.satLayer = null; this.marker = null; }
       if (!this._io && 'IntersectionObserver' in window) { this._io = new IntersectionObserver(es => { this.visible = es[0].isIntersecting; if (this.visible) this.restartParticles(); else this.stopParticles(); }); this._io.observe(el); }
       if ('ResizeObserver' in window) { if (this._sro) this._sro.disconnect(); this._sro = new ResizeObserver(debounce(() => this.renderTicks(), 80)); this._sro.observe($('#mapSlider')); }

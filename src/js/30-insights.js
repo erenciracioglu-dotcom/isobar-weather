@@ -123,6 +123,10 @@ const ACTIVITIES = [
   { id: 'running', icon: 'run', hours: [6, 21], temp: [-3, 6, 18, 28], wind: [20, 45], gust: [45, 70], dry: true, uv: [6, 10], win: 2 },
   { id: 'cycling', icon: 'bike', hours: [7, 20], temp: [2, 12, 25, 33], wind: [15, 35], gust: [35, 55], dry: true, win: 3 },
   { id: 'hiking', icon: 'hike', hours: [7, 18], temp: [0, 9, 22, 31], wind: [25, 50], gust: [50, 75], dry: true, vis: [3000, 10000], win: 4 },
+  /* a long trail with a pack: six dry hours, less heat and sun than a day hike */
+  { id: 'backpacking', icon: 'backpack', hours: [7, 19], temp: [0, 8, 21, 29], wind: [25, 50], gust: [45, 70], dry: true, vis: [3000, 10000], uv: [6, 10], win: 6 },
+  /* the night out: best 12 hours between 18:00 and 09:00; one wet hour halves the score */
+  { id: 'camping', icon: 'tent', overnight: [18, 9], temp: [-2, 8, 22, 30], wind: [15, 35], gust: [35, 60], dry: true, strictDry: true, win: 12 },
   { id: 'beach', icon: 'beach', hours: [9, 19], temp: [19, 25, 34, 40], wind: [20, 40], dry: true, cloud: [30, 85], win: 3 },
   { id: 'bbq', icon: 'bbq', hours: [11, 22], temp: [12, 19, 30, 36], wind: [18, 38], dry: true, win: 3 },
   { id: 'laundry', icon: 'laundry', hours: [8, 19], temp: [4, 15, 40, 45], dry: true, rh: [55, 90], dryAhead: 2, win: 5 },
@@ -133,7 +137,7 @@ const trap = (v, [a, b, c, d]) => (!isNum(v) ? 1 : v <= a || v >= d ? 0 : v < b 
 const lessIsBetter = (v, [good, bad]) => (!isNum(v) ? 1 : v <= good ? 1 : v >= bad ? 0 : 1 - (v - good) / (bad - good));
 const moreIsBetter = (v, [bad, good]) => (!isNum(v) ? 1 : v >= good ? 1 : v <= bad ? 0 : (v - bad) / (good - bad));
 function hourScore(o, i, A) {
-  const H = o.h; let s = trap(A.night ? H.temp[i] : (isNum(H.feels[i]) ? H.feels[i] : H.temp[i]), A.temp);
+  const H = o.h; let s = trap(A.night || A.overnight ? H.temp[i] : (isNum(H.feels[i]) ? H.feels[i] : H.temp[i]), A.temp);
   if (A.wind) s *= lessIsBetter(H.ws[i], A.wind);
   if (A.gust) s *= lessIsBetter(H.wg[i], A.gust);
   if (A.dry) { if (isNum(H.precip[i]) && H.precip[i] >= 0.3) return 0; if (isThunderCode(H.code[i])) return 0; if (isNum(H.pop[i])) s *= 1 - clamp((H.pop[i] - 20) / 100, 0, 0.75); }
@@ -151,6 +155,7 @@ function activityDays(o, A) {
     for (let i = 0; i < H.t.length; i++) {
       const tt = H.t[i];
       if (A.night) { if (tt < ds + 18 * HOUR || tt > ds + 30 * HOUR || H.isDay[i] === 1) continue; }
+      else if (A.overnight) { if (tt <= ds + A.overnight[0] * HOUR || tt > ds + (24 + A.overnight[1]) * HOUR) continue; }
       else { if (tt <= ds || tt > ds + 24 * HOUR) continue; const hh = TZ.parts(tt - HOUR).h; if (hh < A.hours[0] || hh >= A.hours[1]) continue; }
       if (tt <= now) continue;
       cand.push(i);
@@ -161,6 +166,7 @@ function activityDays(o, A) {
     for (let k = 0; k + A.win <= cand.length; k++) {
       if (H.t[cand[k + A.win - 1]] - H.t[cand[k]] > A.win * HOUR) continue;
       let m = 0; for (let q = 0; q < A.win; q++) m += sc[k + q]; m /= A.win;
+      if (A.strictDry) for (let q = 0; q < A.win; q++) { const j = cand[k + q]; if ((isNum(H.precip[j]) && H.precip[j] >= 0.3) || isThunderCode(H.code[j])) { m *= 0.5; break; } }
       if (A.dryAhead) { const j = cand[k + A.win - 1]; for (let q = 1; q <= A.dryAhead; q++) { const p = H.precip[j + q]; if (isNum(p) && p >= 0.3) { m *= 0.4; break; } } }
       if (m > best) { best = m; bi = k; }
     }

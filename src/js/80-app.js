@@ -315,6 +315,7 @@ function bindEvents() {
     if (d.mode) return setMode(d.mode);
     if (d.hstep) { S.hourStep = +d.hstep; saveSettings(); return renderHourly(); }
     if (d.dv) { S.dailyView = d.dv; saveSettings(); return renderDaily(); }
+    if (d.chips) return ChipScroll.step(el);
     if (d.actId) { S.activity = d.actId; saveSettings(); return renderActivities(); }
     if (d.alert !== undefined) return openAlerts(+d.alert);
     if (d.pick) { const p = resolveRef(d.pick); if (p) { closeSheets(); setLocation(p); } return; }

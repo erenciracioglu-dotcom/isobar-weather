@@ -424,6 +424,7 @@ function renderDetails() {
 
 function renderActivities() {
   const el = $('#activities'), o = App.data, A = ACTIVITIES.find(a => a.id === S.activity) || ACTIVITIES[0];
+  const oldRow = el.querySelector('.chips'), keepX = oldRow ? oldRow.scrollLeft : 0;
   const days = activityDays(o, A), scored = days.filter(d => isNum(d.score));
   const best = scored.length ? scored.reduce((x, y) => (y.score > x.score ? y : x)) : null;
   const bestTxt = best && best.score > 0 ? t('actBest', { day: dayDate(o.d.t[best.d]), a: fmtTime(best.start), b: fmtTime(best.end), s: best.score }) : t('actNone');
@@ -432,6 +433,7 @@ function renderActivities() {
     <p class="act-best">${best && best.score > 0 ? `<b>${esc(t('bestTime'))}:</b> ` : ''}${esc(bestTxt)}</p>
     <div class="ab-row" style="--n:${days.length}">${days.map(d => `<div class="ab${best && d.d === best.d && best.score > 0 ? ' best' : ''}" title="${esc(dayDate(o.d.t[d.d]))}: ${isNum(d.score) ? d.score + '/10' + (d.score > 0 ? ' · ' + fmtTime(d.start) + '–' + fmtTime(d.end) : '') : '–'}"><em>${isNum(d.score) ? d.score : ''}</em><i style="--s:${isNum(d.score) ? Math.max(0.04, d.score / 10) : 0.04};background:${scoreColor(d.score)}"></i><span>${esc(wd2(o.d.t[d.d] + 6 * HOUR))}</span><small>${esc(fmtDM(o.d.t[d.d] + 6 * HOUR))}</small></div>`).join('')}</div>
     <p class="act-note">${esc(t('actNote_' + A.id))}</p>`;
+  ChipScroll.enhance(el.querySelector('.chips'), keepX);
 }
 
 function renderFooter() {

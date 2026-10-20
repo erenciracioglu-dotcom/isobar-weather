@@ -313,6 +313,13 @@ button.dc:hover{border-color:var(--line-2)}
 /* ---------- activities ---------- */
 .chips{display:flex;gap:6px;overflow-x:auto;padding:1px 1px 4px;scrollbar-width:none;margin:0 -2px}
 .chips::-webkit-scrollbar{display:none}
+.chips-wrap{position:relative}
+.chips-nav{position:absolute;top:0;bottom:4px;width:44px;display:flex;align-items:center;border:0;padding:0;z-index:2;color:var(--text);cursor:pointer}
+.chips-nav.next{right:-2px;justify-content:flex-end;background:linear-gradient(90deg,transparent,var(--surface) 45%)}
+.chips-nav.prev{left:-2px;justify-content:flex-start;background:linear-gradient(270deg,transparent,var(--surface) 45%)}
+.chips-nav svg.i{width:28px;height:28px;padding:6px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.chips-nav:hover svg.i{background:var(--surface-3);border-color:var(--text-2)}
+.chips-nav[hidden]{display:none}
 .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:700;white-space:nowrap;color:var(--text-2);flex:none}
 .chip svg.i{width:15px;height:15px}
 .chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent-fill);color:var(--text)}

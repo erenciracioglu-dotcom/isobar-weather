@@ -50,8 +50,8 @@ for k in sorted(tr - en): problems.append(f'tr only: {k}')
 fams = {
   'w': [0,1,2,3,45,48,51,53,55,56,57,61,63,65,66,67,68,69,71,73,75,77,80,81,82,85,86,95,96,99],
   'bft': list(range(13)),
-  'act_': ['running','cycling','hiking','beach','bbq','laundry','stars','drone'],
-  'actNote_': ['running','cycling','hiking','beach','bbq','laundry','stars','drone'],
+  'act_': ['running','cycling','hiking','backpacking','camping','beach','bbq','laundry','stars','drone'],
+  'actNote_': ['running','cycling','hiking','backpacking','camping','beach','bbq','laundry','stars','drone'],
   'pn_': ['temp','precip','cloud','wind','pressure','humidity','uv','vis','instab','freezing','solar','soil','et'],
   'ly_': ['temp','precip','wind','gust','cloud','pmsl','rh','radar','sat'],
   'base_': ['auto','dark','light','streets','satellite','terrain'],

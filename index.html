@@ -335,6 +335,13 @@ button.dc:hover{border-color:var(--line-2)}
 /* ---------- activities ---------- */
 .chips{display:flex;gap:6px;overflow-x:auto;padding:1px 1px 4px;scrollbar-width:none;margin:0 -2px}
 .chips::-webkit-scrollbar{display:none}
+.chips-wrap{position:relative}
+.chips-nav{position:absolute;top:0;bottom:4px;width:44px;display:flex;align-items:center;border:0;padding:0;z-index:2;color:var(--text);cursor:pointer}
+.chips-nav.next{right:-2px;justify-content:flex-end;background:linear-gradient(90deg,transparent,var(--surface) 45%)}
+.chips-nav.prev{left:-2px;justify-content:flex-start;background:linear-gradient(270deg,transparent,var(--surface) 45%)}
+.chips-nav svg.i{width:28px;height:28px;padding:6px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.chips-nav:hover svg.i{background:var(--surface-3);border-color:var(--text-2)}
+.chips-nav[hidden]{display:none}
 .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:700;white-space:nowrap;color:var(--text-2);flex:none}
 .chip svg.i{width:15px;height:15px}
 .chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent-fill);color:var(--text)}
@@ -1255,9 +1262,12 @@ en: {
   mNew: 'New moon', mWaxC: 'Waxing crescent', mFirstQ: 'First quarter', mWaxG: 'Waxing gibbous', mFull: 'Full moon', mWanG: 'Waning gibbous', mLastQ: 'Last quarter', mWanC: 'Waning crescent',
   sea: 'Sea', waves: 'Waves', periodS: '{v} s period', seaTemp: 'Sea temperature', clouds: 'Clouds', cHigh: 'High', cMid: 'Mid', cLow: 'Low', cTotal: 'Total',
   activities: 'Activity planner', bestTime: 'Best', actBest: '{day}, {a}–{b} ({s}/10)', actNone: 'No good window in the forecast period.',
-  act_running: 'Running', act_cycling: 'Cycling', act_hiking: 'Hiking', act_beach: 'Beach', act_bbq: 'Barbecue', act_laundry: 'Drying laundry', act_stars: 'Stargazing', act_drone: 'Drone flying',
+  act_running: 'Running', act_cycling: 'Cycling', act_hiking: 'Hiking', act_backpacking: 'Backpack trail', act_camping: 'Camping', act_beach: 'Beach', act_bbq: 'Barbecue', act_laundry: 'Drying laundry', act_stars: 'Stargazing', act_drone: 'Drone flying',
   actNote_running: 'Scores dry hours with a mild feels-like temperature, light wind and moderate UV.', actNote_cycling: 'Scores dry hours with mild temperatures and light wind and gusts.', actNote_hiking: 'Scores dry daylight hours with mild temperatures, moderate wind and good visibility.',
   actNote_beach: 'Scores warm, sunny, dry hours with light wind.', actNote_bbq: 'Scores warm, dry evenings and afternoons with light wind.', actNote_laundry: 'Scores dry 5-hour windows with low humidity and no rain right after.',
+  actNote_backpacking: 'Looks for a dry, cool 6-hour stretch with good visibility for a long trail; with a pack on, heat and strong sun tire you sooner.',
+  actNote_camping: 'Scores the best 12 hours between 18:00 and 09:00: dry, light wind, a night neither too cold nor too warm. One rainy or stormy hour halves the score.',
+  scrollLeft: 'Scroll left', scrollRight: 'Scroll right',
   actNote_stars: 'Scores clear, dry night hours; a bright moon lowers the score.', actNote_drone: 'Scores dry hours with wind under about 15–25 km/h, gusts under 25–40 km/h and good visibility.',
   footData: 'Weather data by', footFallback: 'currently from {p}', footNote: 'Forecasts can be wrong. Check official warnings for safety decisions.',
   temperature: 'Temperature', feelsShort: 'Feels like', wind80: 'Wind at 80 m', cloudLMH: 'Clouds L/M/H %', precipNow: 'Precipitation (1 h)', probability: 'Probability', liftedIndex: 'Lifted index', freezingLevel: 'Freezing level', boundaryLayer: 'Boundary layer',
@@ -1403,9 +1413,12 @@ tr: {
   mNew: 'Yeni ay', mWaxC: 'Büyüyen hilal', mFirstQ: 'İlk dördün', mWaxG: 'Büyüyen ay', mFull: 'Dolunay', mWanG: 'Küçülen ay', mLastQ: 'Son dördün', mWanC: 'Küçülen hilal',
   sea: 'Deniz', waves: 'Dalga', periodS: '{v} sn periyot', seaTemp: 'Deniz suyu sıcaklığı', clouds: 'Bulutluluk', cHigh: 'Yüksek', cMid: 'Orta', cLow: 'Alçak', cTotal: 'Toplam',
   activities: 'Etkinlik planlayıcı', bestTime: 'En iyi', actBest: '{day}, {a}–{b} ({s}/10)', actNone: 'Tahmin döneminde uygun bir zaman yok.',
-  act_running: 'Koşu', act_cycling: 'Bisiklet', act_hiking: 'Yürüyüş', act_beach: 'Plaj', act_bbq: 'Mangal', act_laundry: 'Çamaşır kurutma', act_stars: 'Yıldız gözlemi', act_drone: 'Drone uçuşu',
+  act_running: 'Koşu', act_cycling: 'Bisiklet', act_hiking: 'Yürüyüş', act_backpacking: 'Sırt çantalı yürüyüş', act_camping: 'Kamp', act_beach: 'Plaj', act_bbq: 'Mangal', act_laundry: 'Çamaşır kurutma', act_stars: 'Yıldız gözlemi', act_drone: 'Drone uçuşu',
   actNote_running: 'Yağışsız, hissedilen sıcaklığı ılıman, rüzgârı hafif ve UV’si orta saatleri öne çıkarır.', actNote_cycling: 'Yağışsız, ılıman, rüzgârı ve hamlesi hafif saatleri öne çıkarır.', actNote_hiking: 'Yağışsız, ılıman, rüzgârı orta ve görüşü iyi gündüz saatlerini öne çıkarır.',
   actNote_beach: 'Sıcak, güneşli, yağışsız ve rüzgârı hafif saatleri öne çıkarır.', actNote_bbq: 'Ilık, yağışsız ve rüzgârı hafif öğleden sonra ve akşamları öne çıkarır.', actNote_laundry: 'Nemi düşük ve hemen ardından yağmur olmayan 5 saatlik kuru aralıkları öne çıkarır.',
+  actNote_backpacking: 'Uzun bir parkur için 6 saatlik kuru, serin ve görüşü iyi bir aralık arar; sırtta yükle sıcak ve güçlü güneş daha çabuk yorar.',
+  actNote_camping: 'Akşam 18:00 ile sabah 09:00 arasındaki en iyi 12 saati puanlar: kuru, rüzgârı hafif, gecesi ne çok soğuk ne çok sıcak. Tek bir yağmurlu ya da fırtınalı saat puanı yarıya düşürür.',
+  scrollLeft: 'Sola kaydır', scrollRight: 'Sağa kaydır',
   actNote_stars: 'Açık ve kuru gece saatlerini öne çıkarır; parlak ay puanı düşürür.', actNote_drone: 'Rüzgârı yaklaşık 15–25 km/sa, hamlesi 25–40 km/sa altında, yağışsız ve görüşü iyi saatleri öne çıkarır.',
   footData: 'Hava verisi:', footFallback: 'şu anda {p} kaynağından', footNote: 'Tahminler yanılabilir. Güvenlik kararları için resmi uyarılara bakın.',
   temperature: 'Sıcaklık', feelsShort: 'Hissedilen', wind80: '80 m rüzgâr', cloudLMH: 'Bulut A/O/Y %', precipNow: 'Yağış (1 sa)', probability: 'Olasılık', liftedIndex: 'Kaldırma indeksi', freezingLevel: 'Donma seviyesi', boundaryLayer: 'Sınır tabaka',
@@ -1824,6 +1837,8 @@ function wxIcon(code, isDay = 1, size = 32, anim = false) {
 const UI = {
   pin: 'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21ZM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z',
   chev: 'M6 9l6 6 6-6',
+  chevL: 'M15 6l-6 6 6 6',
+  chevR: 'M9 6l6 6-6 6',
   refresh: 'M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7',
   sliders: 'M4 7h9M17 7h3M15 4.5v5M4 17h3M11 17h9M9 14.5v5',
   search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM20 20l-4-4',
@@ -1861,6 +1876,8 @@ const UI = {
   bbq: 'M5 10h14a7 7 0 0 1-14 0ZM8 17l-2 4M16 17l2 4M10 7c0-1 1-1 1-2M14 7c0-1 1-1 1-2',
   laundry: 'M8 4l-5 3 2 4 2-1v10h10V10l2 1 2-4-5-3a3 3 0 0 1-8 0Z',
   stars: 'M12 3l1.8 4.6L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.4ZM18 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8Z',
+  tent: 'M12 5L3 20h18ZM12 12.5L8.5 20M12 12.5l3.5 7.5M12 5l-1.8-2.5M12 5l1.8-2.5',
+  backpack: 'M6 20V9.5A4.5 4.5 0 0 1 10.5 5h3A4.5 4.5 0 0 1 18 9.5V20ZM10 5V3h4v2M9 20v-5h6v5M9.5 10h5',
   drone: 'M6 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM18 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM6 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM18 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM7.5 7.5l3 3M16.5 7.5l-3 3M7.5 16.5l3-3M16.5 16.5l-3-3M10 10h4v4h-4Z',
   trash: 'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
   up: 'M7 17L17 7M9 7h8v8',
@@ -1875,6 +1892,33 @@ const UI = {
   adv: 'M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-3M20 16V6'
 };
 const ui = (name, cls = 'i') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${UI[name] || UI.info}"/></svg>`;
+/* Chip rows scroll sideways with a finger, but a mouse can't reach the hidden chips.
+   Arrow buttons appear at an end while chips are hidden on that side. */
+const ChipScroll = {
+  ro: 'ResizeObserver' in window ? new ResizeObserver(list => list.forEach(e => ChipScroll.sync(e.target))) : null,
+  enhance(row, keepX) {
+    if (!row || row.parentElement.classList.contains('chips-wrap')) return;
+    const wrap = document.createElement('div'); wrap.className = 'chips-wrap';
+    row.parentNode.insertBefore(wrap, row); wrap.appendChild(row);
+    wrap.insertAdjacentHTML('beforeend', `<button type="button" class="chips-nav prev" data-chips="-1" aria-label="${esc(t('scrollLeft'))}" hidden>${ui('chevL')}</button><button type="button" class="chips-nav next" data-chips="1" aria-label="${esc(t('scrollRight'))}" hidden>${ui('chevR')}</button>`);
+    if (isNum(keepX)) row.scrollLeft = keepX;
+    const on = row.querySelector('[aria-pressed="true"]'), r = row.getBoundingClientRect();
+    if (on && r.width > 0) { const c = on.getBoundingClientRect(); if (c.right > r.right - 36) row.scrollLeft += c.right - r.right + 44; else if (c.left < r.left + 36 && row.scrollLeft > 0) row.scrollLeft -= r.left - c.left + 44; }
+    row.addEventListener('scroll', () => this.sync(row), { passive: true });
+    if (this.ro) this.ro.observe(row);
+    this.sync(row);
+  },
+  sync(row) {
+    const wrap = row.parentElement; if (!wrap || !wrap.classList.contains('chips-wrap')) return;
+    const max = row.scrollWidth - row.clientWidth;
+    wrap.querySelector('.chips-nav.prev').hidden = !(max > 2 && row.scrollLeft > 2);
+    wrap.querySelector('.chips-nav.next').hidden = !(max > 2 && row.scrollLeft < max - 2);
+  },
+  step(btn) {
+    const row = btn.parentElement.querySelector('.chips'); if (!row) return;
+    row.scrollBy({ left: Math.sign(+btn.dataset.chips) * Math.max(120, row.clientWidth * 0.7), behavior: REDUCED ? 'auto' : 'smooth' });
+  }
+};
 const windArrow = (deg, size = 14) => `<svg class="warr" viewBox="0 0 24 24" width="${size}" height="${size}" style="transform:rotate(${((deg + 180) % 360).toFixed(0)}deg)" aria-hidden="true"><path d="M12 4v17M6 10l6-6 6 6"/></svg>`;
 /* National flags as inline SVG (emoji flags show as letters on Windows) */
 const FLAGS = {
@@ -2786,6 +2830,10 @@ const ACTIVITIES = [
   { id: 'running', icon: 'run', hours: [6, 21], temp: [-3, 6, 18, 28], wind: [20, 45], gust: [45, 70], dry: true, uv: [6, 10], win: 2 },
   { id: 'cycling', icon: 'bike', hours: [7, 20], temp: [2, 12, 25, 33], wind: [15, 35], gust: [35, 55], dry: true, win: 3 },
   { id: 'hiking', icon: 'hike', hours: [7, 18], temp: [0, 9, 22, 31], wind: [25, 50], gust: [50, 75], dry: true, vis: [3000, 10000], win: 4 },
+  /* a long trail with a pack: six dry hours, less heat and sun than a day hike */
+  { id: 'backpacking', icon: 'backpack', hours: [7, 19], temp: [0, 8, 21, 29], wind: [25, 50], gust: [45, 70], dry: true, vis: [3000, 10000], uv: [6, 10], win: 6 },
+  /* the night out: best 12 hours between 18:00 and 09:00; one wet hour halves the score */
+  { id: 'camping', icon: 'tent', overnight: [18, 9], temp: [-2, 8, 22, 30], wind: [15, 35], gust: [35, 60], dry: true, strictDry: true, win: 12 },
   { id: 'beach', icon: 'beach', hours: [9, 19], temp: [19, 25, 34, 40], wind: [20, 40], dry: true, cloud: [30, 85], win: 3 },
   { id: 'bbq', icon: 'bbq', hours: [11, 22], temp: [12, 19, 30, 36], wind: [18, 38], dry: true, win: 3 },
   { id: 'laundry', icon: 'laundry', hours: [8, 19], temp: [4, 15, 40, 45], dry: true, rh: [55, 90], dryAhead: 2, win: 5 },
@@ -2796,7 +2844,7 @@ const trap = (v, [a, b, c, d]) => (!isNum(v) ? 1 : v <= a || v >= d ? 0 : v < b 
 const lessIsBetter = (v, [good, bad]) => (!isNum(v) ? 1 : v <= good ? 1 : v >= bad ? 0 : 1 - (v - good) / (bad - good));
 const moreIsBetter = (v, [bad, good]) => (!isNum(v) ? 1 : v >= good ? 1 : v <= bad ? 0 : (v - bad) / (good - bad));
 function hourScore(o, i, A) {
-  const H = o.h; let s = trap(A.night ? H.temp[i] : (isNum(H.feels[i]) ? H.feels[i] : H.temp[i]), A.temp);
+  const H = o.h; let s = trap(A.night || A.overnight ? H.temp[i] : (isNum(H.feels[i]) ? H.feels[i] : H.temp[i]), A.temp);
   if (A.wind) s *= lessIsBetter(H.ws[i], A.wind);
   if (A.gust) s *= lessIsBetter(H.wg[i], A.gust);
   if (A.dry) { if (isNum(H.precip[i]) && H.precip[i] >= 0.3) return 0; if (isThunderCode(H.code[i])) return 0; if (isNum(H.pop[i])) s *= 1 - clamp((H.pop[i] - 20) / 100, 0, 0.75); }
@@ -2814,6 +2862,7 @@ function activityDays(o, A) {
     for (let i = 0; i < H.t.length; i++) {
       const tt = H.t[i];
       if (A.night) { if (tt < ds + 18 * HOUR || tt > ds + 30 * HOUR || H.isDay[i] === 1) continue; }
+      else if (A.overnight) { if (tt <= ds + A.overnight[0] * HOUR || tt > ds + (24 + A.overnight[1]) * HOUR) continue; }
       else { if (tt <= ds || tt > ds + 24 * HOUR) continue; const hh = TZ.parts(tt - HOUR).h; if (hh < A.hours[0] || hh >= A.hours[1]) continue; }
       if (tt <= now) continue;
       cand.push(i);
@@ -2824,6 +2873,7 @@ function activityDays(o, A) {
     for (let k = 0; k + A.win <= cand.length; k++) {
       if (H.t[cand[k + A.win - 1]] - H.t[cand[k]] > A.win * HOUR) continue;
       let m = 0; for (let q = 0; q < A.win; q++) m += sc[k + q]; m /= A.win;
+      if (A.strictDry) for (let q = 0; q < A.win; q++) { const j = cand[k + q]; if ((isNum(H.precip[j]) && H.precip[j] >= 0.3) || isThunderCode(H.code[j])) { m *= 0.5; break; } }
       if (A.dryAhead) { const j = cand[k + A.win - 1]; for (let q = 1; q <= A.dryAhead; q++) { const p = H.precip[j + q]; if (isNum(p) && p >= 0.3) { m *= 0.4; break; } } }
       if (m > best) { best = m; bi = k; }
     }
@@ -3261,6 +3311,7 @@ function renderDetails() {
 
 function renderActivities() {
   const el = $('#activities'), o = App.data, A = ACTIVITIES.find(a => a.id === S.activity) || ACTIVITIES[0];
+  const oldRow = el.querySelector('.chips'), keepX = oldRow ? oldRow.scrollLeft : 0;
   const days = activityDays(o, A), scored = days.filter(d => isNum(d.score));
   const best = scored.length ? scored.reduce((x, y) => (y.score > x.score ? y : x)) : null;
   const bestTxt = best && best.score > 0 ? t('actBest', { day: dayDate(o.d.t[best.d]), a: fmtTime(best.start), b: fmtTime(best.end), s: best.score }) : t('actNone');
@@ -3269,6 +3320,7 @@ function renderActivities() {
     <p class="act-best">${best && best.score > 0 ? `<b>${esc(t('bestTime'))}:</b> ` : ''}${esc(bestTxt)}</p>
     <div class="ab-row" style="--n:${days.length}">${days.map(d => `<div class="ab${best && d.d === best.d && best.score > 0 ? ' best' : ''}" title="${esc(dayDate(o.d.t[d.d]))}: ${isNum(d.score) ? d.score + '/10' + (d.score > 0 ? ' · ' + fmtTime(d.start) + '–' + fmtTime(d.end) : '') : '–'}"><em>${isNum(d.score) ? d.score : ''}</em><i style="--s:${isNum(d.score) ? Math.max(0.04, d.score / 10) : 0.04};background:${scoreColor(d.score)}"></i><span>${esc(wd2(o.d.t[d.d] + 6 * HOUR))}</span><small>${esc(fmtDM(o.d.t[d.d] + 6 * HOUR))}</small></div>`).join('')}</div>
     <p class="act-note">${esc(t('actNote_' + A.id))}</p>`;
+  ChipScroll.enhance(el.querySelector('.chips'), keepX);
 }
 
 function renderFooter() {
@@ -4055,6 +4107,7 @@ const MapView = {
           <div class="tslider" id="mapSlider"><input type="range" id="mapTime" min="0" max="0" value="0" step="1" aria-label="${esc(t('mapTime'))}"><div class="tticks" id="mapTicks"></div></div>
         </div>
         <p class="note">${esc(t('mapNote'))}</p>`;
+      ChipScroll.enhance($('#mapLayers'));
       if (this.map) { this.stopParticles(); this.stopPlay(); try { this.map.remove(); } catch (e) { /* ignore */ } this.map = null; this.field = null; this.base = null; this.baseKind = ''; this.labelsLayer = null; this.radarLayer = null; this.satLayer = null; this.marker = null; }
       if (!this._io && 'IntersectionObserver' in window) { this._io = new IntersectionObserver(es => { this.visible = es[0].isIntersecting; if (this.visible) this.restartParticles(); else this.stopParticles(); }); this._io.observe(el); }
       if ('ResizeObserver' in window) { if (this._sro) this._sro.disconnect(); this._sro = new ResizeObserver(debounce(() => this.renderTicks(), 80)); this._sro.observe($('#mapSlider')); }
@@ -4836,6 +4889,7 @@ function bindEvents() {
     if (d.mode) return setMode(d.mode);
     if (d.hstep) { S.hourStep = +d.hstep; saveSettings(); return renderHourly(); }
     if (d.dv) { S.dailyView = d.dv; saveSettings(); return renderDaily(); }
+    if (d.chips) return ChipScroll.step(el);
     if (d.actId) { S.activity = d.actId; saveSettings(); return renderActivities(); }
     if (d.alert !== undefined) return openAlerts(+d.alert);
     if (d.pick) { const p = resolveRef(d.pick); if (p) { closeSheets(); setLocation(p); } return; }

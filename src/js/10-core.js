@@ -310,6 +310,8 @@ function wxIcon(code, isDay = 1, size = 32, anim = false) {
 const UI = {
   pin: 'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21ZM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z',
   chev: 'M6 9l6 6 6-6',
+  chevL: 'M15 6l-6 6 6 6',
+  chevR: 'M9 6l6 6-6 6',
   refresh: 'M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7',
   sliders: 'M4 7h9M17 7h3M15 4.5v5M4 17h3M11 17h9M9 14.5v5',
   search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM20 20l-4-4',
@@ -347,6 +349,8 @@ const UI = {
   bbq: 'M5 10h14a7 7 0 0 1-14 0ZM8 17l-2 4M16 17l2 4M10 7c0-1 1-1 1-2M14 7c0-1 1-1 1-2',
   laundry: 'M8 4l-5 3 2 4 2-1v10h10V10l2 1 2-4-5-3a3 3 0 0 1-8 0Z',
   stars: 'M12 3l1.8 4.6L18.5 9l-4.7 1.6L12 15l-1.8-4.4L5.5 9l4.7-1.4ZM18 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8Z',
+  tent: 'M12 5L3 20h18ZM12 12.5L8.5 20M12 12.5l3.5 7.5M12 5l-1.8-2.5M12 5l1.8-2.5',
+  backpack: 'M6 20V9.5A4.5 4.5 0 0 1 10.5 5h3A4.5 4.5 0 0 1 18 9.5V20ZM10 5V3h4v2M9 20v-5h6v5M9.5 10h5',
   drone: 'M6 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM18 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM6 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM18 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM7.5 7.5l3 3M16.5 7.5l-3 3M7.5 16.5l3-3M16.5 16.5l-3-3M10 10h4v4h-4Z',
   trash: 'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
   up: 'M7 17L17 7M9 7h8v8',
@@ -361,6 +365,33 @@ const UI = {
   adv: 'M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-3M20 16V6'
 };
 const ui = (name, cls = 'i') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${UI[name] || UI.info}"/></svg>`;
+/* Chip rows scroll sideways with a finger, but a mouse can't reach the hidden chips.
+   Arrow buttons appear at an end while chips are hidden on that side. */
+const ChipScroll = {
+  ro: 'ResizeObserver' in window ? new ResizeObserver(list => list.forEach(e => ChipScroll.sync(e.target))) : null,
+  enhance(row, keepX) {
+    if (!row || row.parentElement.classList.contains('chips-wrap')) return;
+    const wrap = document.createElement('div'); wrap.className = 'chips-wrap';
+    row.parentNode.insertBefore(wrap, row); wrap.appendChild(row);
+    wrap.insertAdjacentHTML('beforeend', `<button type="button" class="chips-nav prev" data-chips="-1" aria-label="${esc(t('scrollLeft'))}" hidden>${ui('chevL')}</button><button type="button" class="chips-nav next" data-chips="1" aria-label="${esc(t('scrollRight'))}" hidden>${ui('chevR')}</button>`);
+    if (isNum(keepX)) row.scrollLeft = keepX;
+    const on = row.querySelector('[aria-pressed="true"]'), r = row.getBoundingClientRect();
+    if (on && r.width > 0) { const c = on.getBoundingClientRect(); if (c.right > r.right - 36) row.scrollLeft += c.right - r.right + 44; else if (c.left < r.left + 36 && row.scrollLeft > 0) row.scrollLeft -= r.left - c.left + 44; }
+    row.addEventListener('scroll', () => this.sync(row), { passive: true });
+    if (this.ro) this.ro.observe(row);
+    this.sync(row);
+  },
+  sync(row) {
+    const wrap = row.parentElement; if (!wrap || !wrap.classList.contains('chips-wrap')) return;
+    const max = row.scrollWidth - row.clientWidth;
+    wrap.querySelector('.chips-nav.prev').hidden = !(max > 2 && row.scrollLeft > 2);
+    wrap.querySelector('.chips-nav.next').hidden = !(max > 2 && row.scrollLeft < max - 2);
+  },
+  step(btn) {
+    const row = btn.parentElement.querySelector('.chips'); if (!row) return;
+    row.scrollBy({ left: Math.sign(+btn.dataset.chips) * Math.max(120, row.clientWidth * 0.7), behavior: REDUCED ? 'auto' : 'smooth' });
+  }
+};
 const windArrow = (deg, size = 14) => `<svg class="warr" viewBox="0 0 24 24" width="${size}" height="${size}" style="transform:rotate(${((deg + 180) % 360).toFixed(0)}deg)" aria-hidden="true"><path d="M12 4v17M6 10l6-6 6 6"/></svg>`;
 /* National flags as inline SVG (emoji flags show as letters on Windows) */
 const FLAGS = {
