@@ -259,6 +259,7 @@ table.mx{border-collapse:separate;border-spacing:2px;width:100%}
 .mx-w .warr{width:10px;height:10px}
 .mx td.past{opacity:.4}
 @media (max-width:420px){.mx td{min-width:34px}.mx td b{font-size:12px}.mx tbody th{font-size:12px}table.mx{border-spacing:1.5px}.mx-r,.mx-w{font-size:10px}}
+.hm-pick{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin:-2px 0 12px;font-size:12.5px;font-weight:700;color:var(--muted)}
 .hm-legend{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin-top:10px;font-size:12px;color:var(--text-2)}
 .hm-t{font-weight:700}
 .hm-bar{display:inline-block;width:150px;max-width:45vw;height:8px;border-radius:4px}

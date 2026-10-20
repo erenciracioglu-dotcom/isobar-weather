@@ -221,6 +221,7 @@ function renderDaily() {
   } else if (idx.length < 15) note = t('daysAvailable', { n: idx.length, src: o.provider });
   el.innerHTML = `<div class="card-h"><h2 class="card-t">${ui('calendar')}${esc(t('forecast15'))}</h2>
     <div class="seg" role="group" aria-label="${esc(t('resolution'))}"><button type="button" data-dv="daily" aria-pressed="${view === 'daily'}">${esc(t('daily'))}</button><button type="button" data-dv="3h" aria-pressed="${view === '3h'}">${esc(t('threeHourly'))}</button></div></div>
+    ${view === '3h' ? heatPicker() : ''}
     ${view === 'daily' ? dailyRows(o, idx) : matrix(o, idx)}
     ${note ? `<p class="note">${esc(note)}</p>` : ''}
     <div class="trend-wrap"><div class="trend-h"><span class="card-t">${ui('chart')}${esc(t('trend15'))}</span><span class="trend-lg"><i class="lg-max"></i>${esc(t('maxShort'))}<i class="lg-min"></i>${esc(t('minShort2'))}<i class="lg-rain"></i>${esc(t('precipitation'))}</span></div><div class="trend" id="trendHost" role="img" aria-label="${esc(t('trend15'))}"></div></div>`;
@@ -320,6 +321,11 @@ const HEATMAPS = {
   rain: { scale: 'precip', val: st => (isNum(st.pr) ? st.pr / 3 : null), alpha: 0.42, show: v => isNum(v) && v >= 0.034 },
   wind: { scale: 'wind', val: st => st.ws, alpha: 0.34, show: v => isNum(v) }
 };
+/* shown only in the 3-hourly view: what the cell colours follow */
+function heatPicker() {
+  const cur = HEATMAPS[S.heatmap] ? S.heatmap : 'temp';
+  return `<div class="hm-pick"><span>${esc(t('hmPick'))}</span><div class="seg" role="group" aria-label="${esc(t('heatmapLbl'))}">${['temp', 'rain', 'wind'].map(x => `<button type="button" data-heatmap="${x}" aria-pressed="${cur === x}">${esc(t('hm_' + x))}</button>`).join('')}</div></div>`;
+}
 function heatLegend(kind, vals) {
   const hm = HEATMAPS[kind], v = vals.filter(x => hm.show(x));
   if (!v.length) return `<span class="hm-none">${esc(t('hmNone_' + kind))}</span>`;

@@ -281,6 +281,7 @@ table.mx{border-collapse:separate;border-spacing:2px;width:100%}
 .mx-w .warr{width:10px;height:10px}
 .mx td.past{opacity:.4}
 @media (max-width:420px){.mx td{min-width:34px}.mx td b{font-size:12px}.mx tbody th{font-size:12px}table.mx{border-spacing:1.5px}.mx-r,.mx-w{font-size:10px}}
+.hm-pick{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin:-2px 0 12px;font-size:12.5px;font-weight:700;color:var(--muted)}
 .hm-legend{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin-top:10px;font-size:12px;color:var(--text-2)}
 .hm-t{font-weight:700}
 .hm-bar{display:inline-block;width:150px;max-width:45vw;height:8px;border-radius:4px}
@@ -1305,7 +1306,7 @@ en: {
   langSwitched: 'Interface language: English',
   locDenied: 'Location not shared, so Karabiga is shown. Tap the place name to change it.',
   heatmapLbl: '3-hourly table colours',
-  heatmapSub: 'Colours in the 15-day 3-hourly view',
+  hmPick: 'Colour by',
   hm_temp: 'Temperature',
   hm_rain: 'Rain',
   hm_wind: 'Wind',
@@ -1452,7 +1453,7 @@ tr: {
   langSwitched: 'Arayüz dili: Türkçe',
   locDenied: 'Konum paylaşılmadı, Karabiga gösteriliyor. Değiştirmek için yer adına dokunun.',
   heatmapLbl: '3 saatlik tablo renkleri',
-  heatmapSub: '15 günlük 3 saatlik görünümdeki renkler',
+  hmPick: 'Renklendirme',
   hm_temp: 'Sıcaklık',
   hm_rain: 'Yağış',
   hm_wind: 'Rüzgâr',
@@ -3057,6 +3058,7 @@ function renderDaily() {
   } else if (idx.length < 15) note = t('daysAvailable', { n: idx.length, src: o.provider });
   el.innerHTML = `<div class="card-h"><h2 class="card-t">${ui('calendar')}${esc(t('forecast15'))}</h2>
     <div class="seg" role="group" aria-label="${esc(t('resolution'))}"><button type="button" data-dv="daily" aria-pressed="${view === 'daily'}">${esc(t('daily'))}</button><button type="button" data-dv="3h" aria-pressed="${view === '3h'}">${esc(t('threeHourly'))}</button></div></div>
+    ${view === '3h' ? heatPicker() : ''}
     ${view === 'daily' ? dailyRows(o, idx) : matrix(o, idx)}
     ${note ? `<p class="note">${esc(note)}</p>` : ''}
     <div class="trend-wrap"><div class="trend-h"><span class="card-t">${ui('chart')}${esc(t('trend15'))}</span><span class="trend-lg"><i class="lg-max"></i>${esc(t('maxShort'))}<i class="lg-min"></i>${esc(t('minShort2'))}<i class="lg-rain"></i>${esc(t('precipitation'))}</span></div><div class="trend" id="trendHost" role="img" aria-label="${esc(t('trend15'))}"></div></div>`;
@@ -3156,6 +3158,11 @@ const HEATMAPS = {
   rain: { scale: 'precip', val: st => (isNum(st.pr) ? st.pr / 3 : null), alpha: 0.42, show: v => isNum(v) && v >= 0.034 },
   wind: { scale: 'wind', val: st => st.ws, alpha: 0.34, show: v => isNum(v) }
 };
+/* shown only in the 3-hourly view: what the cell colours follow */
+function heatPicker() {
+  const cur = HEATMAPS[S.heatmap] ? S.heatmap : 'temp';
+  return `<div class="hm-pick"><span>${esc(t('hmPick'))}</span><div class="seg" role="group" aria-label="${esc(t('heatmapLbl'))}">${['temp', 'rain', 'wind'].map(x => `<button type="button" data-heatmap="${x}" aria-pressed="${cur === x}">${esc(t('hm_' + x))}</button>`).join('')}</div></div>`;
+}
 function heatLegend(kind, vals) {
   const hm = HEATMAPS[kind], v = vals.filter(x => hm.show(x));
   if (!v.length) return `<span class="hm-none">${esc(t('hmNone_' + kind))}</span>`;
@@ -4748,7 +4755,6 @@ function openSettings() {
     </div>
     <h3 class="sec-t">${esc(t('display'))}</h3>
     <div class="set-row"><span>${esc(t('theme'))}</span><div class="seg" role="group">${['auto', 'light', 'dark'].map(x => `<button type="button" data-theme-set="${x}" aria-pressed="${S.theme === x}">${esc(t('theme_' + x))}</button>`).join('')}</div></div>
-    <div class="set-row"><span>${esc(t('heatmapLbl'))}<br><small class="muted">${esc(t('heatmapSub'))}</small></span><div class="seg" role="group" aria-label="${esc(t('heatmapLbl'))}">${['temp', 'rain', 'wind'].map(x => `<button type="button" data-heatmap="${x}" aria-pressed="${S.heatmap === x}">${esc(t('hm_' + x))}</button>`).join('')}</div></div>
     <div class="set-row"><label for="sAqi">${esc(t('aqiStd'))}</label>${sel('sAqi', S.aqi, [['eu', t('aqiEu')], ['us', t('aqiUs')]])}</div>
     <div class="set-row"><label for="sAnim">${esc(t('animations'))}</label><span class="switch"><input type="checkbox" id="sAnim"${S.anim ? ' checked' : ''}><span></span></span></div>
     <h3 class="sec-t">${esc(t('data'))}</h3>

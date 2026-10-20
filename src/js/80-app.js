@@ -234,7 +234,6 @@ function openSettings() {
     </div>
     <h3 class="sec-t">${esc(t('display'))}</h3>
     <div class="set-row"><span>${esc(t('theme'))}</span><div class="seg" role="group">${['auto', 'light', 'dark'].map(x => `<button type="button" data-theme-set="${x}" aria-pressed="${S.theme === x}">${esc(t('theme_' + x))}</button>`).join('')}</div></div>
-    <div class="set-row"><span>${esc(t('heatmapLbl'))}<br><small class="muted">${esc(t('heatmapSub'))}</small></span><div class="seg" role="group" aria-label="${esc(t('heatmapLbl'))}">${['temp', 'rain', 'wind'].map(x => `<button type="button" data-heatmap="${x}" aria-pressed="${S.heatmap === x}">${esc(t('hm_' + x))}</button>`).join('')}</div></div>
     <div class="set-row"><label for="sAqi">${esc(t('aqiStd'))}</label>${sel('sAqi', S.aqi, [['eu', t('aqiEu')], ['us', t('aqiUs')]])}</div>
     <div class="set-row"><label for="sAnim">${esc(t('animations'))}</label><span class="switch"><input type="checkbox" id="sAnim"${S.anim ? ' checked' : ''}><span></span></span></div>
     <h3 class="sec-t">${esc(t('data'))}</h3>
