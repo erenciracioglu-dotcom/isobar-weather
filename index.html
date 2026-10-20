@@ -1665,8 +1665,8 @@ const F = {
   pr: (h, unit = true) => (isNum(h) ? fmtN(Units.pr(h), Units.dec.pr()) + (unit ? NB + Units.label.pr() : '') : '–'),
   d: (m, unit = true) => { if (!isNum(m)) return '–'; const v = Units.d(m); return fmtN(v, v < 10 ? 1 : 0) + (unit ? NB + Units.label.d() : ''); },
   ht: (m, unit = true) => (isNum(m) ? fmtN(Units.ht(m), 0) + (unit ? NB + Units.label.ht() : '') : '–'),
-  /* wave heights need a decimal: 0.3 m, not "0 m" */
-  wv: (m, unit = true) => { if (!isNum(m)) return '–'; const v = Units.ht(m); return fmtN(v, v < 10 ? 1 : 0) + (unit ? NB + Units.label.ht() : ''); },
+  /* wave heights need decimals: 0.3 m, and 0.02 m on a calm sea, never "0 m" */
+  wv: (m, unit = true) => { if (!isNum(m)) return '–'; const v = Units.ht(m); return fmtN(v, v > 0 && v < 0.095 ? 2 : v < 10 ? 1 : 0) + (unit ? NB + Units.label.ht() : ''); },
   pct: v => fmtPct(v)
 };
 const COMPASS = {
