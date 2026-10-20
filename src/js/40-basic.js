@@ -424,7 +424,7 @@ function renderActivities() {
   el.innerHTML = `<div class="card-h"><h2 class="card-t">${ui('calendar')}${esc(t('activities'))}</h2></div>
     <div class="chips" role="group" aria-label="${esc(t('activities'))}">${ACTIVITIES.map(a => `<button type="button" class="chip" data-act-id="${a.id}" aria-pressed="${a.id === A.id}">${ui(a.icon)}${esc(t('act_' + a.id))}</button>`).join('')}</div>
     <p class="act-best">${best && best.score > 0 ? `<b>${esc(t('bestTime'))}:</b> ` : ''}${esc(bestTxt)}</p>
-    <div class="ab-row" style="--n:${days.length}">${days.map(d => `<div class="ab${best && d.d === best.d && best.score > 0 ? ' best' : ''}" title="${esc(dayDate(o.d.t[d.d]))}: ${isNum(d.score) ? d.score + '/10' + (d.score > 0 ? ' · ' + fmtTime(d.start) + '–' + fmtTime(d.end) : '') : '–'}"><em>${isNum(d.score) ? d.score : ''}</em><i style="height:${isNum(d.score) ? Math.max(4, d.score * 10) : 4}%;background:${scoreColor(d.score)}"></i><span>${esc(wd2(o.d.t[d.d] + 6 * HOUR))}</span></div>`).join('')}</div>
+    <div class="ab-row" style="--n:${days.length}">${days.map(d => `<div class="ab${best && d.d === best.d && best.score > 0 ? ' best' : ''}" title="${esc(dayDate(o.d.t[d.d]))}: ${isNum(d.score) ? d.score + '/10' + (d.score > 0 ? ' · ' + fmtTime(d.start) + '–' + fmtTime(d.end) : '') : '–'}"><em>${isNum(d.score) ? d.score : ''}</em><i style="height:${isNum(d.score) ? Math.max(4, d.score * 10) : 4}%;background:${scoreColor(d.score)}"></i><span>${esc(wd2(o.d.t[d.d] + 6 * HOUR))}</span><small>${esc(fmtDM(o.d.t[d.d] + 6 * HOUR))}</small></div>`).join('')}</div>
     <p class="act-note">${esc(t('actNote_' + A.id))}</p>`;
 }
 
