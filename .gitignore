@@ -1,0 +1,19 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Build and test output
+build/
+__pycache__/
+test/shots/
+test/shots2/
+test/report*.json
+
+# Optional local test fonts (see test/mocks.py)
+vendor/fonts/
