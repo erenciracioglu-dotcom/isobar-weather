@@ -65,6 +65,8 @@ Birimler tek dokunuşla değişir: °C/°F; km/h, m/s, mph, knot, Beaufort; mm/i
 
 Isobar Weather, Eren'in istekleri ve geri bildirimleriyle Claude (Anthropic) tarafından yapıldı; Ekim 2026.
 
+Canlı sürüm ziyaretleri [GoatCounter](https://www.goatcounter.com/) ile sayar; çerez kullanmaz, kişisel veri saklamaz. Dosyayı kendi bilgisayarınızda açtığınızda sayım yapılmaz.
+
 ## English
 
 Isobar is two apps in one: a plain everyday weather app, and a panel for people who like to follow the weather in detail. On first start it asks for your location; if you say no, it shows Karabiga (Biga, Çanakkale, Türkiye). The interface opens in Turkish; the flag at the top right switches it to English.
@@ -118,6 +120,8 @@ Units switch with one tap: °C/°F; km/h, m/s, mph, knots, Beaufort; mm/in; hPa,
 ### About
 
 Isobar Weather was made by Claude (Anthropic) from Eren's requests and feedback; October 2026.
+
+The live site counts visits with [GoatCounter](https://www.goatcounter.com/), which uses no cookies and stores no personal data. Opening the file on your own computer is not counted.
 
 ## Lisans / License
 
