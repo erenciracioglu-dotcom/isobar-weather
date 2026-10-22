@@ -1161,6 +1161,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 <!-- GoatCounter (no cookies): counts visits on the GitHub Pages site only, not when the file is opened locally -->
 <script>(function () {
   if (!/\.github\.io$/.test(location.hostname)) return;
+  window.goatcounter = { title: 'Isobar Weather' }; /* the page title holds the chosen place; keep it out of the stats */
   var s = document.createElement('script');
   s.async = true;
   s.src = 'https://gc.zgo.at/count.js';
