@@ -391,6 +391,41 @@ select{-webkit-appearance:none;appearance:none;background:var(--surface-2) url("
 .tbtns .icon-btn{width:36px;height:36px}
 .tbtns .icon-btn.play{background:var(--text);color:var(--surface);border-color:var(--text)}
 .tbtns .icon-btn:disabled{opacity:.4;cursor:default}
+/* forecast strip under the map's time bar */
+.mstrip{margin-top:14px;padding-top:10px;border-top:1px solid var(--line)}
+.mstrip-h{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin-bottom:8px}
+.mstrip-t{display:inline-flex;align-items:center;gap:7px;font:700 13.5px var(--font-body);color:var(--text)}
+.mstrip-t svg.i{width:16px;height:16px;color:var(--text-2)}
+.mstrip-hint{flex:1 1 220px;font-size:12px;color:var(--muted)}
+.mstrip-nav{display:inline-flex;gap:6px;margin-left:auto}
+.mstrip-nav .icon-btn{width:32px;height:32px}
+.mstrip-scroll{position:relative;overflow-x:auto;overflow-y:hidden;padding-bottom:6px;user-select:none;-webkit-user-select:none;cursor:grab;scrollbar-width:thin;overscroll-behavior-x:contain}
+.mstrip-scroll.dragging{cursor:grabbing}
+.mst{border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums;font-size:12px;line-height:1.1}
+.mst td{width:31px;min-width:31px;max-width:31px;padding:0;text-align:center;height:20px;cursor:pointer;white-space:nowrap}
+.mst th.lab{position:sticky;left:0;z-index:3;background:var(--surface);min-width:96px;padding:0 10px 0 0;text-align:left;font:400 11.5px var(--font-body);color:var(--text-2);white-space:nowrap}
+.mst th.lab small{margin-left:4px;color:var(--muted);font-size:10.5px}
+.mst .r-day th{height:24px;text-align:left;font:700 12px var(--font-body);color:var(--text);white-space:nowrap;vertical-align:middle}
+.mst .r-day th:not(.lab){border-left:1px solid var(--line-2)}
+.mst .r-day th:nth-child(2){border-left:0}
+.mst .r-day th span{position:sticky;left:104px;padding:0 6px}
+.mst .r-day th.we{color:var(--accent)}
+.mst td.d0{border-left:1px solid var(--line-2)}
+.mst .r-hour td{height:18px;font-size:11px;color:var(--muted)}
+.mst .r-hour td.sel{color:var(--text);font-weight:700}
+.mst .r-icon td{height:28px}
+.mst .r-icon svg{width:22px;height:22px;display:block;margin:auto}
+.mst .r-temp td{font-weight:700;font-size:12.5px;color:var(--text)}
+.mst .r-feel td{font-size:11.5px;color:var(--text-2)}
+.mst .r-rain td{font-size:11px;font-weight:700;color:var(--text)}
+.mst .r-wind td{height:21px;font-weight:700;font-size:11.5px}
+.mst .r-gust td{height:19px;font-size:11px}
+.mst .r-dir td{height:20px;color:var(--text-2)}
+.mst .r-dir svg{display:block;margin:auto;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.mst td.past{opacity:.42}
+.mstrip-sel{position:absolute;z-index:2;pointer-events:none;border:2px solid var(--text);border-radius:6px;transition:left .14s ease}
+.mstrip-now{position:absolute;z-index:2;top:24px;bottom:6px;width:0;border-left:2px dashed var(--bad);pointer-events:none}
+@media (max-width:520px){.mst th.lab{min-width:78px;padding-right:6px;font-size:11px}.mst .r-day th span{left:84px}.mst td{width:29px;min-width:29px;max-width:29px}.mstrip-hint{display:none}}
 .tlabel{grid-area:label;font:700 13.5px var(--font-body);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tslider{grid-area:slider;position:relative;padding-bottom:24px;min-width:0}
 .tslider input[type=range]{-webkit-appearance:none;appearance:none;display:block;width:100%;height:28px;margin:0;background:transparent;cursor:pointer}
@@ -1278,6 +1313,7 @@ en: {
   actNote_backpacking: 'Looks for a dry, cool 6-hour stretch with good visibility for a long trail; with a pack on, heat and strong sun tire you sooner.',
   actNote_camping: 'Scores the best 12 hours between 18:00 and 09:00: dry, light wind, a night neither too cold nor too warm. One rainy or stormy hour halves the score.',
   scrollLeft: 'Scroll left', scrollRight: 'Scroll right',
+  stripTitle: '3-hourly forecast for {p}', stripHint: 'Click a column to show that time on the map; drag to scroll.', stripPrev: 'Earlier', stripNext: 'Later',
   actNote_stars: 'Scores clear, dry night hours; a bright moon lowers the score.', actNote_drone: 'Scores dry hours with wind under about 15–25 km/h, gusts under 25–40 km/h and good visibility.',
   footData: 'Weather data by', footFallback: 'currently from {p}', footNote: 'Forecasts can be wrong. Check official warnings for safety decisions.',
   temperature: 'Temperature', feelsShort: 'Feels like', wind80: 'Wind at 80 m', cloudLMH: 'Clouds L/M/H %', precipNow: 'Precipitation (1 h)', probability: 'Probability', liftedIndex: 'Lifted index', freezingLevel: 'Freezing level', boundaryLayer: 'Boundary layer',
@@ -1429,6 +1465,7 @@ tr: {
   actNote_backpacking: 'Uzun bir parkur için 6 saatlik kuru, serin ve görüşü iyi bir aralık arar; sırtta yükle sıcak ve güçlü güneş daha çabuk yorar.',
   actNote_camping: 'Akşam 18:00 ile sabah 09:00 arasındaki en iyi 12 saati puanlar: kuru, rüzgârı hafif, gecesi ne çok soğuk ne çok sıcak. Tek bir yağmurlu ya da fırtınalı saat puanı yarıya düşürür.',
   scrollLeft: 'Sola kaydır', scrollRight: 'Sağa kaydır',
+  stripTitle: '{p} için 3 saatlik tahmin', stripHint: 'Bir sütuna tıklayınca harita o saate geçer; sürükleyerek kaydırabilirsiniz.', stripPrev: 'Önceki saatler', stripNext: 'Sonraki saatler',
   actNote_stars: 'Açık ve kuru gece saatlerini öne çıkarır; parlak ay puanı düşürür.', actNote_drone: 'Rüzgârı yaklaşık 15–25 km/sa, hamlesi 25–40 km/sa altında, yağışsız ve görüşü iyi saatleri öne çıkarır.',
   footData: 'Hava verisi:', footFallback: 'şu anda {p} kaynağından', footNote: 'Tahminler yanılabilir. Güvenlik kararları için resmi uyarılara bakın.',
   temperature: 'Sıcaklık', feelsShort: 'Hissedilen', wind80: '80 m rüzgâr', cloudLMH: 'Bulut A/O/Y %', precipNow: 'Yağış (1 sa)', probability: 'Olasılık', liftedIndex: 'Kaldırma indeksi', freezingLevel: 'Donma seviyesi', boundaryLayer: 'Sınır tabaka',
@@ -4116,8 +4153,14 @@ const MapView = {
           <span class="tlabel" id="mapTimeLabel">–</span>
           <div class="tslider" id="mapSlider"><input type="range" id="mapTime" min="0" max="0" value="0" step="1" aria-label="${esc(t('mapTime'))}"><div class="tticks" id="mapTicks"></div></div>
         </div>
+        <div class="mstrip" id="mapStrip" hidden>
+          <div class="mstrip-h"><span class="mstrip-t">${ui('table')}<span id="mapStripTitle"></span></span><span class="mstrip-hint">${esc(t('stripHint'))}</span>
+            <span class="mstrip-nav"><button class="icon-btn" type="button" data-strip="-1" aria-label="${esc(t('stripPrev'))}" title="${esc(t('stripPrev'))}">${ui('chevL')}</button><button class="icon-btn" type="button" data-strip="1" aria-label="${esc(t('stripNext'))}" title="${esc(t('stripNext'))}">${ui('chevR')}</button></span></div>
+          <div class="mstrip-scroll" id="mapStripScroll"></div>
+        </div>
         <p class="note">${esc(t('mapNote'))}</p>`;
       ChipScroll.enhance($('#mapLayers'));
+      this.stripKey = ''; this.bindStrip();
       if (this.map) { this.stopParticles(); this.stopPlay(); try { this.map.remove(); } catch (e) { /* ignore */ } this.map = null; this.field = null; this.base = null; this.baseKind = ''; this.labelsLayer = null; this.radarLayer = null; this.satLayer = null; this.marker = null; }
       if (!this._io && 'IntersectionObserver' in window) { this._io = new IntersectionObserver(es => { this.visible = es[0].isIntersecting; if (this.visible) this.restartParticles(); else this.stopParticles(); }); this._io.observe(el); }
       if ('ResizeObserver' in window) { if (this._sro) this._sro.disconnect(); this._sro = new ResizeObserver(debounce(() => this.renderTicks(), 80)); this._sro.observe($('#mapSlider')); }
@@ -4462,12 +4505,80 @@ const MapView = {
   updateTimebar() {
     const r = $('#mapTime'), lab = $('#mapTimeLabel'), play = $('#mapPlay'); if (!r) return;
     const k = S.adv.layer, setDis = d => { r.disabled = d; play.disabled = d; $('#mapPrev').disabled = d; $('#mapNext').disabled = d; };
-    if (k === 'radar') { r.max = Math.max(0, this.radarFrames.length - 1); r.value = this.radarIdx; setDis(this.radarFrames.length < 2); const f = this.radarFrames[this.radarIdx]; lab.textContent = f ? t('radarAt', { t: fmtTime(f.time * 1000) }) : '–'; this.renderTicks(); return; }
-    if (k === 'sat') { r.max = 0; r.value = 0; setDis(true); lab.textContent = this.satDay ? t('satDay', { d: this.satDay }) : '–'; this.renderTicks(); return; }
+    if (k === 'radar') { r.max = Math.max(0, this.radarFrames.length - 1); r.value = this.radarIdx; setDis(this.radarFrames.length < 2); const f = this.radarFrames[this.radarIdx]; lab.textContent = f ? t('radarAt', { t: fmtTime(f.time * 1000) }) : '–'; this.renderTicks(); this.renderStrip(); return; }
+    if (k === 'sat') { r.max = 0; r.value = 0; setDis(true); lab.textContent = this.satDay ? t('satDay', { d: this.satDay }) : '–'; this.renderTicks(); this.renderStrip(); return; }
     const g = this.grid; setDis(!g);
-    if (!g) { r.max = 0; lab.textContent = this.gridLoading ? t('loadingShort') : '–'; this.renderTicks(); return; }
+    if (!g) { r.max = 0; lab.textContent = this.gridLoading ? t('loadingShort') : '–'; this.renderTicks(); this.renderStrip(); return; }
     r.max = g.times.length - 1; r.value = this.tIdx; const tt = g.times[this.tIdx]; lab.textContent = fmtDate(tt) + ' · ' + fmtTime(tt);
-    this.renderTicks();
+    this.renderTicks(); this.renderStrip();
+  },
+  /* ---- forecast strip under the time bar: the chosen place, one column per map time step ---- */
+  renderStrip() {
+    const box = $('#mapStrip'), sc = $('#mapStripScroll'); if (!box || !sc) return;
+    const g = this.grid, o = App.data, k = S.adv.layer, show = !!(g && o && o.h && k !== 'radar' && k !== 'sat');
+    box.hidden = !show; if (!show) return;
+    const key = [g.at, g.times.length, o.lat, o.lon, o.h.t.length, o.h.t[0], LANG, JSON.stringify(S.units)].join('|');
+    if (key !== this.stripKey) { this.stripKey = key; this.buildStrip(); this.stripPlaced = false; }
+    if (box.offsetParent !== null) this.selectStrip();
+  },
+  buildStrip() {
+    const sc = $('#mapStripScroll'), g = this.grid, o = App.data, H = o.h, T = g.times, now = Date.now();
+    $('#mapStripTitle').textContent = t('stripTitle', { p: (App.loc && App.loc.name) || '' });
+    const near = tt => {
+      let lo = 0, hi = H.t.length - 1; if (hi < 0) return -1;
+      while (lo < hi) { const m = (lo + hi) >> 1; if (H.t[m] < tt) lo = m + 1; else hi = m; }
+      if (lo > 0 && Math.abs(H.t[lo - 1] - tt) < Math.abs(H.t[lo] - tt)) lo--;
+      return Math.abs(H.t[lo] - tt) <= 45 * 60e3 ? lo : -1;
+    };
+    const cols = T.map((tt, i) => { const kk = near(tt); return { i, tt, k: kk, st: kk >= 0 ? slotStats(o, kk, 3) : null, p: TZ.parts(tt) }; });
+    const days = []; cols.forEach(c => { const d = days[days.length - 1]; if (!d || d.key !== c.p.key) days.push({ key: c.p.key, n: 1, tt: c.tt, wd: c.p.wd, first: c.i }); else d.n++; });
+    const firsts = new Set(days.map(d => d.first));
+    const ink = rgb => (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2] > 150 ? '#13202b' : '#fff');
+    const td = (c, inner = '', style = '') => `<td class="${c.tt + 3 * HOUR <= now ? 'past' : ''}${firsts.has(c.i) && c.i ? ' d0' : ''}" data-col="${c.i}"${style ? ` style="${style}"` : ''}>${inner}</td>`;
+    const shade = (c, v, scale, alpha) => { if (!isNum(v)) return td(c); const rgb = scaleRGB(scale, v); return td(c, esc(fmtN(Units.w(v), 0)), `background:${rgbCss(rgb, alpha)};color:${ink(rgb)}`); };
+    const lab = (name, unit) => `<th class="lab" scope="row">${esc(name)}${unit ? `<small>${esc(unit)}</small>` : ''}</th>`;
+    const pDec = S.units.precip === 'in' ? 2 : 1;
+    const row = (cls, head, f) => `<tr class="${cls}">${head}${cols.map(c => (c.st ? f(c, c.st, c.k) : td(c))).join('')}</tr>`;
+    const html = `<table class="mst">
+      <tr class="r-day"><th class="lab"></th>${days.map((d, j) => `<th colspan="${d.n}" class="${d.wd === 0 || d.wd === 6 ? 'we' : ''}${j ? ' d0' : ''}"><span>${esc(d.n >= 4 ? fmtWeekday(d.tt, true) + ' ' + TZ.parts(d.tt).d : wd2(d.tt) + ' ' + TZ.parts(d.tt).d)}</span></th>`).join('')}</tr>
+      ${row('r-hour', lab(t('time')), (c, st, kk) => td(c, esc(c.p.mi ? fmtTime(c.tt) : hourLabel(c.p.h))).replace('<td ', `<td title="${esc(`${fmtDate(c.tt)} ${fmtTime(c.tt)} · ${wmoText(st.code)} · ${F.t(H.temp[kk])} · ${t('precipitation')} ${F.p(st.pr || 0)}${isNum(st.pop) ? ' (' + fmtPct(st.pop) + ')' : ''} · ${t('wind')} ${F.w(st.ws)} ${compass(st.wd)}, ${t('gustsV', { v: F.w(st.wg) })}`)}" `))}
+      ${row('r-icon', lab(t('weather')), (c, st) => td(c, wxIcon(st.code, st.isDay ?? (c.p.h >= 6 && c.p.h < 18 ? 1 : 0), 22)))}
+      ${row('r-temp', lab(t('temperature'), Units.label.t()), (c, st, kk) => td(c, esc(F.t(H.temp[kk]))))}
+      ${row('r-feel', lab(t('feelsShort'), Units.label.t()), (c, st, kk) => td(c, esc(F.t(H.feels[kk]))))}
+      ${row('r-rain', lab(t('precipitation'), Units.label.p()), (c, st) => (isNum(st.pr) && st.pr >= 0.05 ? td(c, esc(fmtN(Units.p(st.pr), Units.p(st.pr) >= 10 ? 0 : pDec)), `background:${rgbCss(scaleRGB('precip', st.pr / 3), 0.55)}`) : td(c)))}
+      ${row('r-wind', lab(t('wind'), Units.label.w()), (c, st) => shade(c, st.ws, 'wind', 0.9))}
+      ${row('r-gust', lab(t('gusts'), Units.label.w()), (c, st) => shade(c, st.wg, 'wind', 0.9))}
+      ${row('r-dir', lab(t('direction')), (c, st) => td(c, isNum(st.wd) ? windArrow(st.wd, 14) : '').replace('<td ', `<td title="${esc(compass(st.wd))}" `))}
+    </table><div class="mstrip-sel" id="mapStripSel"></div><div class="mstrip-now" id="mapStripNow" hidden></div>`;
+    sc.innerHTML = html;
+  },
+  /* highlight the map's time step; scroll it into view (the first time: now, with a little of the past showing) */
+  selectStrip() {
+    const sc = $('#mapStripScroll'), sel = $('#mapStripSel'), g = this.grid; if (!sc || !sel || !g) return;
+    const i = clamp(this.tIdx, 0, g.times.length - 1), c = sc.querySelector(`.r-hour td[data-col="${i}"]`); if (!c) return;
+    const top = sc.querySelector('.r-day').offsetHeight, tbl = sc.querySelector('table');
+    sel.style.left = c.offsetLeft + 'px'; sel.style.width = c.offsetWidth + 'px'; sel.style.top = top + 'px'; sel.style.height = (tbl.offsetHeight - top) + 'px';
+    sc.querySelectorAll('.r-hour td.sel').forEach(e => e.classList.remove('sel')); c.classList.add('sel');
+    const nowEl = $('#mapStripNow'), now = Date.now(), T = g.times, i0 = T.findIndex(tt => tt <= now && now < tt + 3 * HOUR), cn = i0 >= 0 && sc.querySelector(`.r-hour td[data-col="${i0}"]`);
+    nowEl.hidden = !cn; if (cn) { nowEl.style.left = (cn.offsetLeft + cn.offsetWidth * (now - T[i0]) / (3 * HOUR)).toFixed(1) + 'px'; nowEl.style.top = top + 'px'; nowEl.title = t('now'); }
+    const labW = sc.querySelector('th.lab').offsetWidth, x0 = c.offsetLeft - labW, view = sc.clientWidth - labW;
+    if (!this.stripPlaced) { sc.scrollLeft = Math.max(0, x0 - 3 * c.offsetWidth); this.stripPlaced = true; return; }
+    if (x0 < sc.scrollLeft + 2 || x0 + c.offsetWidth > sc.scrollLeft + view - 2) sc.scrollTo({ left: Math.max(0, x0 - view / 3), behavior: this.playing || REDUCED ? 'auto' : 'smooth' });
+  },
+  stripPage(d) { const sc = $('#mapStripScroll'); if (!sc) return; const labW = (sc.querySelector('th.lab') || {}).offsetWidth || 0; sc.scrollBy({ left: d * (sc.clientWidth - labW) * 0.85, behavior: REDUCED ? 'auto' : 'smooth' }); },
+  /* a click picks that time; with a mouse, dragging pans the strip instead */
+  bindStrip() {
+    const sc = $('#mapStripScroll'); if (!sc) return;
+    let drag = null, dragged = false;
+    sc.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' || e.button !== 0) return; drag = { x: e.clientX, left: sc.scrollLeft, moved: false }; dragged = false; });
+    sc.addEventListener('pointermove', e => {
+      if (!drag) return; const dx = e.clientX - drag.x;
+      if (!drag.moved && Math.abs(dx) > 5) { drag.moved = true; sc.classList.add('dragging'); try { sc.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } }
+      if (drag.moved) sc.scrollLeft = drag.left - dx;
+    });
+    const end = () => { if (drag && drag.moved) dragged = true; drag = null; sc.classList.remove('dragging'); };
+    sc.addEventListener('pointerup', end); sc.addEventListener('pointercancel', end);
+    sc.addEventListener('click', e => { if (dragged) { dragged = false; return; } const cell = e.target.closest('[data-col]'); if (cell) this.jumpTo(+cell.dataset.col); });
   },
   renderTicks() {
     const box = $('#mapTicks'); if (!box) return;
@@ -4900,6 +5011,7 @@ function bindEvents() {
     if (d.hstep) { S.hourStep = +d.hstep; saveSettings(); return renderHourly(); }
     if (d.dv) { S.dailyView = d.dv; saveSettings(); return renderDaily(); }
     if (d.chips) return ChipScroll.step(el);
+    if (d.strip) return MapView.stripPage(+d.strip);
     if (d.actId) { S.activity = d.actId; saveSettings(); return renderActivities(); }
     if (d.alert !== undefined) return openAlerts(+d.alert);
     if (d.pick) { const p = resolveRef(d.pick); if (p) { closeSheets(); setLocation(p); } return; }
