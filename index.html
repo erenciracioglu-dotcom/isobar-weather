@@ -1313,6 +1313,7 @@ en: {
   actNote_backpacking: 'Looks for a dry, cool 6-hour stretch with good visibility for a long trail; with a pack on, heat and strong sun tire you sooner.',
   actNote_camping: 'Scores the best 12 hours between 18:00 and 09:00: dry, light wind, a night neither too cold nor too warm. One rainy or stormy hour halves the score.',
   scrollLeft: 'Scroll left', scrollRight: 'Scroll right',
+  playSpeed: 'Map playback speed', playSpeedSub: 'How long each frame stays on screen when you press play on the map',
   stripTitle: '3-hourly forecast for {p}', stripHint: 'Click a column to show that time on the map; drag to scroll.', stripPrev: 'Earlier', stripNext: 'Later',
   actNote_stars: 'Scores clear, dry night hours; a bright moon lowers the score.', actNote_drone: 'Scores dry hours with wind under about 15–25 km/h, gusts under 25–40 km/h and good visibility.',
   footData: 'Weather data by', footFallback: 'currently from {p}', footNote: 'Forecasts can be wrong. Check official warnings for safety decisions.',
@@ -1465,6 +1466,7 @@ tr: {
   actNote_backpacking: 'Uzun bir parkur için 6 saatlik kuru, serin ve görüşü iyi bir aralık arar; sırtta yükle sıcak ve güçlü güneş daha çabuk yorar.',
   actNote_camping: 'Akşam 18:00 ile sabah 09:00 arasındaki en iyi 12 saati puanlar: kuru, rüzgârı hafif, gecesi ne çok soğuk ne çok sıcak. Tek bir yağmurlu ya da fırtınalı saat puanı yarıya düşürür.',
   scrollLeft: 'Sola kaydır', scrollRight: 'Sağa kaydır',
+  playSpeed: 'Harita oynatma hızı', playSpeedSub: 'Haritada oynat tuşuna basınca her karenin ekranda kalma süresi',
   stripTitle: '{p} için 3 saatlik tahmin', stripHint: 'Bir sütuna tıklayınca harita o saate geçer; sürükleyerek kaydırabilirsiniz.', stripPrev: 'Önceki saatler', stripNext: 'Sonraki saatler',
   actNote_stars: 'Açık ve kuru gece saatlerini öne çıkarır; parlak ay puanı düşürür.', actNote_drone: 'Rüzgârı yaklaşık 15–25 km/sa, hamlesi 25–40 km/sa altında, yağışsız ve görüşü iyi saatleri öne çıkarır.',
   footData: 'Hava verisi:', footFallback: 'şu anda {p} kaynağından', footNote: 'Tahminler yanılabilir. Güvenlik kararları için resmi uyarılara bakın.',
@@ -1632,8 +1634,10 @@ const DEFAULTS = {
   units: { temp: 'C', wind: 'kmh', precip: 'mm', pressure: 'hPa', dist: 'km', time: '24' },
   aqi: 'eu', theme: 'auto', lang: 'tr', anim: true, mode: 'basic',
   hourStep: 1, dailyView: 'daily', activity: 'running', heatmap: 'temp',
-  adv: { range: '7d', step: 1, model: 'best_match', panels: ['temp', 'precip', 'wind'], layer: 'temp', base: 'auto', particles: true, labels: true, scale: 'local', grey: false, cmpVar: 'temp' }
+  adv: { range: '7d', step: 1, model: 'best_match', panels: ['temp', 'precip', 'wind'], layer: 'temp', base: 'auto', particles: true, labels: true, scale: 'local', grey: false, cmpVar: 'temp', playMs: 700 }
 };
+/* time per frame when the map plays (ms), chosen in Settings */
+const PLAY_STEPS = [300, 500, 700, 1000, 1500, 2000, 3000];
 /* Default place when the user does not share a location */
 const HOME = { name: 'Karabiga', admin: 'Biga, Çanakkale', country: 'Türkiye', cc: 'TR', lat: 40.4036, lon: 27.3032, tz: 'Europe/Istanbul' };
 const UNIT_PRESETS = {
@@ -4616,8 +4620,7 @@ const MapView = {
   startPlay() {
     const r = $('#mapTime'); if (!r || r.disabled) return;
     this.playing = true; $('#mapPlay').innerHTML = ui('pause');
-    const radar = S.adv.layer === 'radar';
-    this.playTimer = setInterval(() => { const max = +r.max; let v = +r.value + 1; if (v > max) v = 0; r.value = v; this.onTime(v); }, radar ? 1300 : 700);
+    this.playTimer = setInterval(() => { const max = +r.max; let v = +r.value + 1; if (v > max) v = 0; r.value = v; this.onTime(v); }, clamp(+S.adv.playMs || 700, 150, 5000));
   },
   stopPlay() { this.playing = false; clearInterval(this.playTimer); const b = $('#mapPlay'); if (b) b.innerHTML = ui('play', 'i fill'); },
   /* ---- legend: what the colours mean, the range on screen and the value under the cursor ---- */
@@ -4931,6 +4934,7 @@ function openSettings() {
     <div class="set-row"><span>${esc(t('theme'))}</span><div class="seg" role="group">${['auto', 'light', 'dark'].map(x => `<button type="button" data-theme-set="${x}" aria-pressed="${S.theme === x}">${esc(t('theme_' + x))}</button>`).join('')}</div></div>
     <div class="set-row"><label for="sAqi">${esc(t('aqiStd'))}</label>${sel('sAqi', S.aqi, [['eu', t('aqiEu')], ['us', t('aqiUs')]])}</div>
     <div class="set-row"><label for="sAnim">${esc(t('animations'))}</label><span class="switch"><input type="checkbox" id="sAnim"${S.anim ? ' checked' : ''}><span></span></span></div>
+    <div class="set-row"><label for="sPlay">${esc(t('playSpeed'))}<br><small class="muted">${esc(t('playSpeedSub'))}</small></label>${sel('sPlay', String(S.adv.playMs), PLAY_STEPS.map(ms => [String(ms), fmtN(ms / 1000, ms % 1000 ? 1 : 0) + ' ' + t('secShort')]))}</div>
     <h3 class="sec-t">${esc(t('data'))}</h3>
     <div class="set-row"><label for="sModel">${esc(t('model'))}</label>${sel('sModel', S.adv.model, MODELS.map(([id]) => [id, modelLabel(id)]))}</div>
     <div class="set-row"><span>${esc(t('clearData'))}<br><small class="muted">${esc(t('clearDataSub'))}</small></span><button class="btn small" type="button" data-act="clearcache">${ui('trash')}${esc(t('clear'))}</button></div>
@@ -5041,6 +5045,7 @@ function bindEvents() {
     const unitMap = { uTemp: 'temp', uWind: 'wind', uPrecip: 'precip', uPress: 'pressure', uDist: 'dist', uTime: 'time' };
     if (unitMap[el.id]) { S.units[unitMap[el.id]] = v; onUnitsChanged(); $$('[data-preset]').forEach(b => b.setAttribute('aria-pressed', String(presetOn(b.dataset.preset)))); return; }
     if (el.id === 'sAqi') { S.aqi = v; saveSettings(); return renderAll(); }
+    if (el.id === 'sPlay') { S.adv.playMs = +v; saveSettings(); if (MapView.playing) { MapView.stopPlay(); MapView.startPlay(); } return; }
     if (el.id === 'sAnim') { S.anim = el.checked; saveSettings(); applyTheme(); renderAll(); HeroFX.loop(); return MapView.restartParticles(); }
     if (el.id === 'sModel' || el.id === 'advModel') { S.adv.model = v; saveSettings(); const c = Cache.get(App.loc, v); if (c) { App.data = c; renderAll(); } return refresh(); }
     if (el.id === 'mapBase') { S.adv.base = v; saveSettings(); return MapView.setBase(); }

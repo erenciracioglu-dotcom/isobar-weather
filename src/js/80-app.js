@@ -236,6 +236,7 @@ function openSettings() {
     <div class="set-row"><span>${esc(t('theme'))}</span><div class="seg" role="group">${['auto', 'light', 'dark'].map(x => `<button type="button" data-theme-set="${x}" aria-pressed="${S.theme === x}">${esc(t('theme_' + x))}</button>`).join('')}</div></div>
     <div class="set-row"><label for="sAqi">${esc(t('aqiStd'))}</label>${sel('sAqi', S.aqi, [['eu', t('aqiEu')], ['us', t('aqiUs')]])}</div>
     <div class="set-row"><label for="sAnim">${esc(t('animations'))}</label><span class="switch"><input type="checkbox" id="sAnim"${S.anim ? ' checked' : ''}><span></span></span></div>
+    <div class="set-row"><label for="sPlay">${esc(t('playSpeed'))}<br><small class="muted">${esc(t('playSpeedSub'))}</small></label>${sel('sPlay', String(S.adv.playMs), PLAY_STEPS.map(ms => [String(ms), fmtN(ms / 1000, ms % 1000 ? 1 : 0) + ' ' + t('secShort')]))}</div>
     <h3 class="sec-t">${esc(t('data'))}</h3>
     <div class="set-row"><label for="sModel">${esc(t('model'))}</label>${sel('sModel', S.adv.model, MODELS.map(([id]) => [id, modelLabel(id)]))}</div>
     <div class="set-row"><span>${esc(t('clearData'))}<br><small class="muted">${esc(t('clearDataSub'))}</small></span><button class="btn small" type="button" data-act="clearcache">${ui('trash')}${esc(t('clear'))}</button></div>
@@ -346,6 +347,7 @@ function bindEvents() {
     const unitMap = { uTemp: 'temp', uWind: 'wind', uPrecip: 'precip', uPress: 'pressure', uDist: 'dist', uTime: 'time' };
     if (unitMap[el.id]) { S.units[unitMap[el.id]] = v; onUnitsChanged(); $$('[data-preset]').forEach(b => b.setAttribute('aria-pressed', String(presetOn(b.dataset.preset)))); return; }
     if (el.id === 'sAqi') { S.aqi = v; saveSettings(); return renderAll(); }
+    if (el.id === 'sPlay') { S.adv.playMs = +v; saveSettings(); if (MapView.playing) { MapView.stopPlay(); MapView.startPlay(); } return; }
     if (el.id === 'sAnim') { S.anim = el.checked; saveSettings(); applyTheme(); renderAll(); HeroFX.loop(); return MapView.restartParticles(); }
     if (el.id === 'sModel' || el.id === 'advModel') { S.adv.model = v; saveSettings(); const c = Cache.get(App.loc, v); if (c) { App.data = c; renderAll(); } return refresh(); }
     if (el.id === 'mapBase') { S.adv.base = v; saveSettings(); return MapView.setBase(); }

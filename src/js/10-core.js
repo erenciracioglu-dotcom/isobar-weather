@@ -58,8 +58,10 @@ const DEFAULTS = {
   units: { temp: 'C', wind: 'kmh', precip: 'mm', pressure: 'hPa', dist: 'km', time: '24' },
   aqi: 'eu', theme: 'auto', lang: 'tr', anim: true, mode: 'basic',
   hourStep: 1, dailyView: 'daily', activity: 'running', heatmap: 'temp',
-  adv: { range: '7d', step: 1, model: 'best_match', panels: ['temp', 'precip', 'wind'], layer: 'temp', base: 'auto', particles: true, labels: true, scale: 'local', grey: false, cmpVar: 'temp' }
+  adv: { range: '7d', step: 1, model: 'best_match', panels: ['temp', 'precip', 'wind'], layer: 'temp', base: 'auto', particles: true, labels: true, scale: 'local', grey: false, cmpVar: 'temp', playMs: 700 }
 };
+/* time per frame when the map plays (ms), chosen in Settings */
+const PLAY_STEPS = [300, 500, 700, 1000, 1500, 2000, 3000];
 /* Default place when the user does not share a location */
 const HOME = { name: 'Karabiga', admin: 'Biga, Çanakkale', country: 'Türkiye', cc: 'TR', lat: 40.4036, lon: 27.3032, tz: 'Europe/Istanbul' };
 const UNIT_PRESETS = {

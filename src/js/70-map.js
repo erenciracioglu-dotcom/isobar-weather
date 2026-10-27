@@ -570,8 +570,7 @@ const MapView = {
   startPlay() {
     const r = $('#mapTime'); if (!r || r.disabled) return;
     this.playing = true; $('#mapPlay').innerHTML = ui('pause');
-    const radar = S.adv.layer === 'radar';
-    this.playTimer = setInterval(() => { const max = +r.max; let v = +r.value + 1; if (v > max) v = 0; r.value = v; this.onTime(v); }, radar ? 1300 : 700);
+    this.playTimer = setInterval(() => { const max = +r.max; let v = +r.value + 1; if (v > max) v = 0; r.value = v; this.onTime(v); }, clamp(+S.adv.playMs || 700, 150, 5000));
   },
   stopPlay() { this.playing = false; clearInterval(this.playTimer); const b = $('#mapPlay'); if (b) b.innerHTML = ui('play', 'i fill'); },
   /* ---- legend: what the colours mean, the range on screen and the value under the cursor ---- */
