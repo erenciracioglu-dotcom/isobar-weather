@@ -52,16 +52,16 @@ const Store = {
 };
 
 /* ---------- settings ---------- */
-const SETTINGS_VERSION = 2;
+const SETTINGS_VERSION = 3;
 const DEFAULTS = {
   v: SETTINGS_VERSION,
   units: { temp: 'C', wind: 'kmh', precip: 'mm', pressure: 'hPa', dist: 'km', time: '24' },
   aqi: 'eu', theme: 'auto', lang: 'tr', anim: true, mode: 'basic',
   hourStep: 1, dailyView: 'daily', activity: 'running', heatmap: 'temp',
-  adv: { range: '7d', step: 1, model: 'best_match', panels: ['temp', 'precip', 'wind'], layer: 'temp', base: 'auto', particles: true, labels: true, scale: 'local', grey: false, cmpVar: 'temp', playMs: 700, fade: 0 }
+  adv: { range: '7d', step: 1, model: 'best_match', panels: ['temp', 'precip', 'wind'], layer: 'temp', base: 'auto', particles: true, labels: true, scale: 'local', grey: false, cmpVar: 'temp', playMs: 1500, fade: 0 }
 };
 /* time per frame when the map plays (ms), chosen in Settings */
-const PLAY_STEPS = [300, 500, 700, 1000, 1500, 2000, 3000];
+const PLAY_STEPS = [300, 500, 700, 1000, 1500, 2000, 3000, 4000, 5000];
 /* Default place when the user does not share a location */
 const HOME = { name: 'Karabiga', admin: 'Biga, Çanakkale', country: 'Türkiye', cc: 'TR', lat: 40.4036, lon: 27.3032, tz: 'Europe/Istanbul' };
 const UNIT_PRESETS = {
@@ -79,6 +79,7 @@ let S = (() => {
       if (!saved.lang || saved.lang === 'auto') s.lang = 'tr';
       s.adv.base = ({ light: 'grey', dark: 'dark', streets: 'streets', satellite: 'satellite', terrain: 'terrain' })[saved.adv && saved.adv.base] || 'auto';
     }
+    if ((saved.v || 1) < 3 && s.adv.playMs === 700) s.adv.playMs = 1500;   /* v2 → v3: playback default went from 0.7 s to 1.5 s */
     if (s.lang !== 'en') s.lang = 'tr';
     s.v = SETTINGS_VERSION;
     return s;
