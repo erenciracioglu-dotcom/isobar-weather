@@ -29,6 +29,7 @@ Isobar iki uygulamayı bir arada sunar: her gün bakılan sade bir hava uygulama
 
 - Ayrıntılı anlık durum, altı grupta: sıcaklık ve nem, rüzgâr, basınç ve gökyüzü, yağış ve güneş, atmosfer (CAPE, donma seviyesi), toprak
 - Hava haritası: sıcaklık, yağış, rüzgâr, hamle, bulut, basınç (izobarlarla), nem, radar ve uydu katmanları; rüzgâr akışı animasyonu; tarihli zaman çubuğu; haritada dokunulan noktanın tahmini. Altlıklar gri, koyu, sokak, topografik, arazi ve uydu; hiçbiri anahtar istemez.
+- Haritanın altında seçili yer için 3 saatlik tahmin şeridi: hava durumu, sıcaklık, hissedilen, yağış, renkli rüzgâr ve hamle, rüzgâr yönü. Bir sütuna tıklayınca harita o saate geçer; şerit oynatmayı ve zaman çubuğunu izler.
 - Meteogram: 48 saat, 7 gün ya da 15 gün; sıcaklık, yağış, rüzgâr ve 10 panel daha
 - Güneş ve ay; deniz (dalga, ölü dalga, deniz suyu sıcaklığı)
 - Model karşılaştırması: 8 küresel model, sıcaklık, rüzgâr, hamle ya da yağış için
@@ -85,6 +86,7 @@ Isobar is two apps in one: a plain everyday weather app, and a panel for people 
 
 - Current conditions in detail, in six groups: temperature and humidity, wind, pressure and sky, rain and sun, atmosphere (CAPE, freezing level), ground
 - Weather map: temperature, precipitation, wind, gusts, cloud, pressure (with isobars), humidity, radar and satellite layers; animated wind flow; a time bar with dates; the forecast for any point you tap. Base maps are grey, dark, streets, topographic, terrain and satellite, and none of them needs a key.
+- Under the map, a 3-hourly forecast strip for the chosen place: weather, temperature, feels-like, precipitation, colour-coded wind and gusts, and wind direction. Clicking a column moves the map to that time; the strip follows playback and the time bar.
 - Meteogram over 48 hours, 7 days or 15 days: temperature, precipitation, wind and 10 more panels
 - Sun and moon; marine (waves, swell, sea temperature)
 - Model comparison: 8 global models, for temperature, wind, gusts or precipitation
