@@ -237,6 +237,7 @@ function openSettings() {
     <div class="set-row"><label for="sAqi">${esc(t('aqiStd'))}</label>${sel('sAqi', S.aqi, [['eu', t('aqiEu')], ['us', t('aqiUs')]])}</div>
     <div class="set-row"><label for="sAnim">${esc(t('animations'))}</label><span class="switch"><input type="checkbox" id="sAnim"${S.anim ? ' checked' : ''}><span></span></span></div>
     <div class="set-row"><label for="sFade">${esc(t('fadeLbl'))}<br><small class="muted">${esc(t('fadeSub'))}</small></label><span class="set-range"><input type="range" id="sFade" min="0" max="90" step="10" value="${clamp(+S.adv.fade || 0, 0, 90)}"><output id="sFadeV" for="sFade">${esc(fmtPct(clamp(+S.adv.fade || 0, 0, 90)))}</output></span></div>
+    <div class="set-row"><label for="sAutoGrid">${esc(t('autoGridLbl'))}<br><small class="muted">${esc(t('autoGridSub'))}</small></label><span class="switch"><input type="checkbox" id="sAutoGrid"${S.adv.autoGrid !== false ? ' checked' : ''}><span></span></span></div>
     <div class="set-row"><label for="sPlay">${esc(t('playSpeed'))}<br><small class="muted">${esc(t('playSpeedSub'))}</small></label>${sel('sPlay', String(S.adv.playMs), PLAY_STEPS.map(ms => [String(ms), fmtN(ms / 1000, ms % 1000 ? 1 : 0) + ' ' + t('secShort')]))}</div>
     <h3 class="sec-t">${esc(t('data'))}</h3>
     <div class="set-row"><label for="sModel">${esc(t('model'))}</label>${sel('sModel', S.adv.model, MODELS.map(([id]) => [id, modelLabel(id)]))}</div>
@@ -311,7 +312,7 @@ function bindEvents() {
     if (el.id === 'mapPlay') return MapView.togglePlay();
     if (el.id === 'mapPrev') return MapView.stepTime(-1);
     if (el.id === 'mapNext') return MapView.stepTime(1);
-    if (el.id === 'mapUpd') return MapView.ensureGrid(true);
+    if (el.id === 'mapUpd') { MapView.gridErr = null; MapView.autoPause = 0; return MapView.ensureGrid(true); }
     if (el.id === 'mapRecenter') return MapView.recenter();
     if (d.close !== undefined) return closeSheets();
     if (d.mode) return setMode(d.mode);
@@ -348,6 +349,7 @@ function bindEvents() {
     const unitMap = { uTemp: 'temp', uWind: 'wind', uPrecip: 'precip', uPress: 'pressure', uDist: 'dist', uTime: 'time' };
     if (unitMap[el.id]) { S.units[unitMap[el.id]] = v; onUnitsChanged(); $$('[data-preset]').forEach(b => b.setAttribute('aria-pressed', String(presetOn(b.dataset.preset)))); return; }
     if (el.id === 'sAqi') { S.aqi = v; saveSettings(); return renderAll(); }
+    if (el.id === 'sAutoGrid') { S.adv.autoGrid = el.checked; saveSettings(); MapView.gridErr = null; MapView.autoPause = 0; return MapView.checkCoverage(); }
     if (el.id === 'sFade') { S.adv.fade = +v; saveSettings(); return MapView.drawField(); }
     if (el.id === 'sPlay') { S.adv.playMs = +v; saveSettings(); if (MapView.playing) { MapView.stopPlay(); MapView.startPlay(); } return; }
     if (el.id === 'sAnim') { S.anim = el.checked; saveSettings(); applyTheme(); renderAll(); HeroFX.loop(); return MapView.restartParticles(); }

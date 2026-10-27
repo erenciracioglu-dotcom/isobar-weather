@@ -212,7 +212,7 @@ const MapView = {
     this.ensureGrid();
     this.syncControls(); this.drawField(); this.restartParticles(); this.renderLegend(); this.updateTimebar();
   },
-  async ensureGrid(force) {
+  async ensureGrid(force, auto) {
     if (!this.map || this.gridLoading || !App.loc) return;
     const key = App.data.lat.toFixed(2) + ',' + App.data.lon.toFixed(2);
     if (!force && this.grid && this.gridKey === key && Date.now() - this.grid.at < 90 * 60e3) return;
@@ -222,17 +222,42 @@ const MapView = {
     if (n - s > 28) { n = clamp(c.lat + 14, -84, 84); s = clamp(c.lat - 14, -84, 84); }
     const size = this.map.getSize(), aspect = size.x / Math.max(1, size.y);
     const nx = clamp(Math.round(Math.sqrt(96 * aspect)), 6, 14), ny = clamp(Math.round(96 / nx), 6, 12);
+    clearTimeout(this.autoTimer);
+    const keepT = this.grid && this.gridKey === key ? this.grid.times[clamp(this.tIdx, 0, this.grid.times.length - 1)] : null;
     this.gridLoading = true; this.msg(t('mapGridLoading')); this.updateTimebar();
-    try { this.grid = await getGrid({ n, s, w, e }, nx, ny); this.gridKey = key; this.gridErr = null; this.msg(''); this.setTimeToNow(); this._frame = null; }
-    catch (err) { this.gridErr = err.message; this.msg(t('mapGridFail', { e: err.message })); }
-    finally { this.gridLoading = false; const u = $('#mapUpd'); if (u) u.hidden = true; this.drawField(); this.restartParticles(); this.renderLegend(); this.updateTimebar(); }
+    let failed = false;
+    try {
+      this.grid = await getGrid({ n, s, w, e }, nx, ny); this.gridKey = key; this.gridErr = null; this.msg(''); this._frame = null;
+      const i = keepT == null ? -1 : this.grid.times.indexOf(keepT);   /* a new area keeps the time on screen */
+      if (i >= 0) this.tIdx = i; else this.setTimeToNow();
+    }
+    catch (err) { failed = true; this.gridErr = err.message; this.msg(t('mapGridFail', { e: err.message })); if (auto) this.autoPause = Date.now() + 60e3; }
+    finally { this.gridLoading = false; const u = $('#mapUpd'); if (u) u.hidden = true; this.drawField(); this.restartParticles(); this.renderLegend(); this.updateTimebar(); this.checkCoverage(); }
   },
-  checkCoverage() {
-    const u = $('#mapUpd'); if (!u || !this.grid || !this.map) return;
+  /* the grid no longer fits the view: less than 3/4 of the view covered, or zoomed far into it */
+  needsGrid() {
+    if (!this.grid || !this.map) return false;
     const b = this.map.getBounds(), g = this.grid;
     const ow = Math.max(0, Math.min(b.getEast(), g.e) - Math.max(b.getWest(), g.w)), oh = Math.max(0, Math.min(b.getNorth(), g.n) - Math.max(b.getSouth(), g.s));
     const vw = b.getEast() - b.getWest(), vh = b.getNorth() - b.getSouth(), cover = (ow * oh) / Math.max(1e-6, vw * vh);
-    u.hidden = !(cover < 0.75 || vw / (g.e - g.w) < 0.3);
+    return cover < 0.75 || vw / (g.e - g.w) < 0.3;
+  },
+  /* Each grid is ~100 points, which Open-Meteo's free API counts as ~100 calls (limits: 600 a minute, 5,000 an hour).
+     So automatic loads wait until the map is still, keep 20 s apart, stop after 20 an hour, and pause a minute after
+     a failure; in those cases the "Load this area" button appears instead. */
+  checkCoverage() {
+    const u = $('#mapUpd'); if (!u || !this.grid || !this.map) return;
+    clearTimeout(this.autoTimer);
+    if (!this.needsGrid()) { u.hidden = true; return; }
+    const now = Date.now(); this.autoLog = (this.autoLog || []).filter(x => now - x < 3600e3);
+    const can = S.adv.autoGrid !== false && !this.gridErr && now >= (this.autoPause || 0) && this.autoLog.length < 20;
+    if (!can) { u.hidden = false; return; }
+    const wait = Math.max(900, (this.autoLog[this.autoLog.length - 1] || 0) + 20e3 - now);
+    u.hidden = wait <= 2000;   /* a longer wait: offer the button too, so it can load right away */
+    this.autoTimer = setTimeout(() => {
+      if (!this.needsGrid() || this.gridLoading || S.adv.autoGrid === false) return;
+      this.autoLog.push(Date.now()); this.ensureGrid(true, true);
+    }, wait);
   },
   setTimeToNow() { const g = this.grid; if (!g) return; const now = Date.now(); let bi = 0, bd = Infinity; g.times.forEach((tt, i) => { const d = Math.abs(tt - now); if (d < bd) { bd = d; bi = i; } }); this.tIdx = bi; },
   fieldValues(layer, it) {
@@ -471,7 +496,7 @@ const MapView = {
     const box = $('#mapStrip'), sc = $('#mapStripScroll'); if (!box || !sc) return;
     const g = this.grid, o = App.data, k = S.adv.layer, show = !!(g && o && o.h && k !== 'radar' && k !== 'sat');
     box.hidden = !show; if (!show) return;
-    const key = [g.at, g.times.length, o.lat, o.lon, o.h.t.length, o.h.t[0], LANG, JSON.stringify(S.units)].join('|');
+    const key = [g.times[0], g.times.length, o.lat, o.lon, o.h.t.length, o.h.t[0], LANG, JSON.stringify(S.units)].join('|');
     if (key !== this.stripKey) { this.stripKey = key; this.buildStrip(); this.stripPlaced = false; }
     if (box.offsetParent !== null) this.selectStrip();
   },
