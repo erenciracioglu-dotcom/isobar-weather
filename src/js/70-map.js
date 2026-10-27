@@ -281,7 +281,7 @@ const MapView = {
     const W = Math.ceil(size.x / step), H = Math.ceil(size.y / step), lons = new Float64Array(W), lats = new Float64Array(H);
     for (let x = 0; x < W; x++) lons[x] = map.containerPointToLatLng([x * step + step / 2, 0]).lng;
     for (let y = 0; y < H; y++) lats[y] = map.containerPointToLatLng([0, y * step + step / 2]).lat;
-    const vals = fr.vals, a = this.fieldAlpha();
+    const vals = fr.vals, a = this.fieldAlpha(), fade = 1 - clamp(+S.adv.fade || 0, 0, 90) / 100; /* transparency chosen in Settings */
     const img = ctx.createImageData(W, H), data = img.data;
     for (let y = 0; y < H; y++) {
       let fy = (g.n - lats[y]) / (g.n - g.s) * (g.ny - 1); if (fy < -0.6 || fy > g.ny - 0.4) continue; fy = clamp(fy, 0, g.ny - 1);
@@ -290,7 +290,7 @@ const MapView = {
         let fx = (lo - g.w) / (g.e - g.w) * (g.nx - 1); if (fx < -0.6 || fx > g.nx - 0.4) continue; fx = clamp(fx, 0, g.nx - 1);
         const v = bicubic(vals, 0, g.nx, g.ny, fx, fy); if (v !== v) continue;
         const col = this.colorFor(layer, v, fr.rng, a); if (!col) continue;
-        const k = (y * W + x) * 4; data[k] = col[0]; data[k + 1] = col[1]; data[k + 2] = col[2]; data[k + 3] = col[3] * 255;
+        const k = (y * W + x) * 4; data[k] = col[0]; data[k + 1] = col[1]; data[k + 2] = col[2]; data[k + 3] = col[3] * 255 * fade;
       }
     }
     const off = this._off || (this._off = document.createElement('canvas')); off.width = W; off.height = H; off.getContext('2d').putImageData(img, 0, 0);
