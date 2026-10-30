@@ -315,6 +315,8 @@ const UI = {
   pin: 'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21ZM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z',
   chev: 'M6 9l6 6 6-6',
   chevL: 'M15 6l-6 6 6 6',
+  expand: 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',
+  shrink: 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5',
   chevR: 'M9 6l6 6-6 6',
   refresh: 'M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7',
   sliders: 'M4 7h9M17 7h3M15 4.5v5M4 17h3M11 17h9M9 14.5v5',
@@ -369,6 +371,60 @@ const UI = {
   adv: 'M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-3M20 16V6'
 };
 const ui = (name, cls = 'i') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${UI[name] || UI.info}"/></svg>`;
+/* Full-screen cards: a corner button (shown on hover; always faintly on touch screens) opens a card on its own.
+   Uses the Fullscreen API where it exists, otherwise (iPhone) the card covers the window. A MutationObserver puts the
+   button back whenever a card re-renders its contents. */
+const FullCard = {
+  IDS: ['hourly', 'daily', 'activities', 'advNow', 'advMap', 'advMeteo', 'advAstro', 'advMarine', 'advModels', 'advAQ', 'advEns', 'advClimate', 'advTable'],
+  card: null,
+  init() {
+    const mo = new MutationObserver(list => { for (const m of list) { const c = m.target; if (c.nodeType === 1 && c.classList.contains('card') && this.IDS.includes(c.id)) this.ensure(c); } });
+    mo.observe(document.body, { childList: true, subtree: true });
+    this.IDS.forEach(id => { const c = document.getElementById(id); if (c) this.ensure(c); });
+    for (const ev of ['fullscreenchange', 'webkitfullscreenchange']) document.addEventListener(ev, () => { if (this.card && !(document.fullscreenElement || document.webkitFullscreenElement)) this.exit(true); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && this.card && $('#backdrop').hidden) this.exit(); });
+    window.addEventListener('resize', debounce(() => { if (this.card) this.relayout(this.card); }, 120));
+  },
+  ensure(c) {
+    const on = c.classList.contains('is-full');
+    let b = c.querySelector(':scope > .fs-btn');
+    if (!b) { c.insertAdjacentHTML('beforeend', '<button class="fs-btn" type="button" data-fs></button>'); b = c.lastElementChild; }
+    const lbl = t(on ? 'fsExit' : 'fsEnter');
+    if (b.dataset.on !== String(on) || b.title !== lbl) { b.dataset.on = String(on); b.innerHTML = ui(on ? 'shrink' : 'expand'); b.title = lbl; b.setAttribute('aria-label', lbl); }
+  },
+  toggle(c) { if (!c) return; if (this.card) { const same = this.card === c; this.exit(); if (same) return; } this.enter(c); },
+  enter(c) {
+    this.card = c; c.classList.add('is-full'); document.documentElement.classList.add('fs-open'); this.ensure(c);
+    const req = c.requestFullscreen || c.webkitRequestFullscreen;
+    if (req && (document.fullscreenEnabled || document.webkitFullscreenEnabled)) { try { const r = req.call(c); if (r && r.catch) r.catch(() => {}); } catch (e) { /* stay in the window-filling mode */ } }
+    c.scrollTop = 0; this.relayout(c);
+  },
+  exit(fromBrowser) {
+    const c = this.card; if (!c) return; this.card = null;
+    c.classList.remove('is-full'); document.documentElement.classList.remove('fs-open'); this.ensure(c);
+    if (!fromBrowser && (document.fullscreenElement || document.webkitFullscreenElement)) { const x = document.exitFullscreen || document.webkitExitFullscreen; try { const r = x.call(document); if (r && r.catch) r.catch(() => {}); } catch (e) { /* ignore */ } }
+    this.relayout(c);
+    if (c.isConnected) c.scrollIntoView({ block: 'nearest' });
+  },
+  /* charts and the map size themselves to the card */
+  relayout(c) {
+    const run = () => {
+      if (typeof Charts !== 'undefined') Charts.forEach(ch => { if (c.contains(ch.host)) ch.layout(); });
+      if (c.id === 'advMap') {
+        /* full screen: the map and its time bar fill the screen; the forecast strip and note follow below */
+        const box = c.querySelector('.map-box'), tb = c.querySelector('.timebar');
+        if (box) {
+          if (c.classList.contains('is-full')) {
+            const top = box.getBoundingClientRect().top - c.getBoundingClientRect().top + c.scrollTop;
+            box.style.height = Math.max(360, Math.round(c.clientHeight - top - (tb ? tb.offsetHeight + 14 : 0) - 18)) + 'px';
+          } else box.style.height = '';
+        }
+        if (typeof MapView !== 'undefined' && MapView.map) { MapView.map.invalidateSize(); MapView.renderTicks(); MapView.selectStrip(); }
+      }
+    };
+    requestAnimationFrame(run); setTimeout(run, 250);
+  }
+};
 /* Chip rows scroll sideways with a finger, but a mouse can't reach the hidden chips.
    Arrow buttons appear at an end while chips are hidden on that side. */
 const ChipScroll = {

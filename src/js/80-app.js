@@ -318,6 +318,7 @@ function bindEvents() {
     if (d.mode) return setMode(d.mode);
     if (d.hstep) { S.hourStep = +d.hstep; saveSettings(); return renderHourly(); }
     if (d.dv) { S.dailyView = d.dv; saveSettings(); return renderDaily(); }
+    if (d.fs !== undefined) return FullCard.toggle(el.closest('.card'));
     if (d.chips) return ChipScroll.step(el);
     if (d.strip) return MapView.stripPage(+d.strip);
     if (d.actId) { S.activity = d.actId; saveSettings(); return renderActivities(); }
@@ -397,7 +398,7 @@ async function firstRun() {
 function init() {
   applyLang(); applyTheme(); setStaticTexts();
   $('#heroIso').innerHTML = isobarSvg();
-  HeroFX.init(); makeTouchIcon(); bindEvents();
+  HeroFX.init(); makeTouchIcon(); bindEvents(); FullCard.init();
   const fromHash = parseHash(), last = Store.get('lastLoc', null);
   Net.listeners.add(debounce(() => { if (App.mode === 'advanced' && App.data && $('#advSources')) renderSources(); }, 600));
   if (fromHash) {

@@ -38,6 +38,8 @@ Isobar iki uygulamayı bir arada sunar: her gün bakılan sade bir hava uygulama
 - 1991–2020 normalleriyle karşılaştırma
 - Saatlik veri tablosu ve CSV dışa aktarma
 
+Grafik ve tablo içeren kartlar sağ üst köşedeki düğmeyle tam ekran açılır (bilgisayarda düğme imleç kartın üstüne gelince görünür).
+
 Birimler tek dokunuşla değişir: °C/°F; km/h, m/s, mph, knot, Beaufort; mm/inç; hPa, mmHg, inHg; km/mil; 24/12 saat.
 
 ### Kullanım
@@ -94,6 +96,8 @@ Isobar is two apps in one: a plain everyday weather app, and a panel for people 
 - Forecast confidence: the spread of dozens of runs of the same model, and the daily chance of rain
 - Comparison with the 1991–2020 normals
 - An hourly data table with CSV export
+
+Cards with charts and tables open full screen from the button in their top-right corner (on a computer it shows when the pointer is over the card).
 
 Units switch with one tap: °C/°F; km/h, m/s, mph, knots, Beaufort; mm/in; hPa, mmHg, inHg; km/mi; 24/12-hour clock.
 

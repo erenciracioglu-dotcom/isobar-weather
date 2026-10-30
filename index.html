@@ -185,7 +185,23 @@ svg.i.fill{fill:currentColor}
 #daily{flex:1 1 auto;display:flex;flex-direction:column}
 #activities{flex:1 1 auto;display:flex;flex-direction:column}
 @media (min-width:980px){.basic-grid{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 16px;min-width:0;box-shadow:var(--shadow)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 16px;min-width:0;box-shadow:var(--shadow);position:relative}
+/* full-screen cards */
+.fs-btn{position:absolute;top:-11px;right:-11px;z-index:6;width:28px;height:28px;padding:0;display:grid;place-items:center;border-radius:50%;border:1px solid var(--line-2);background:var(--surface);color:var(--text-2);box-shadow:0 2px 6px rgba(0,0,0,.14);cursor:pointer;opacity:0;transform:scale(.8);transition:opacity .15s ease,transform .15s ease}
+.fs-btn svg.i{width:15px;height:15px}
+.fs-btn:hover{color:var(--text);border-color:var(--text-2)}
+.fs-btn:focus-visible{opacity:1;transform:none}
+@media (hover:hover){.card:hover>.fs-btn{opacity:1;transform:none}}
+@media (hover:none){.fs-btn{opacity:.8;transform:none;width:26px;height:26px;top:-9px;right:-9px}}
+html.fs-open,html.fs-open body{overflow:hidden}
+.card.is-full{position:fixed;inset:0;z-index:85;width:auto;max-width:none;height:auto;max-height:none;margin:0;border:0;border-radius:0;box-shadow:none;overflow:auto;overscroll-behavior:contain;background:var(--surface);padding:18px max(22px,env(safe-area-inset-right,0px)) 24px max(22px,env(safe-area-inset-left,0px))}
+.card.is-full::backdrop{background:var(--bg)}
+.card.is-full>.fs-btn{position:fixed;top:12px;right:14px;width:38px;height:38px;opacity:1;transform:none;z-index:1100}
+.card.is-full>.fs-btn svg.i{width:18px;height:18px}
+.card.is-full>.card-h{padding-right:48px}
+.card.is-full .trend{min-height:300px}
+.card.is-full .ab-row{min-height:45vh;max-height:none}
+.card.is-full .dt-big{max-height:calc(100vh - 150px)}
 .card-h{display:flex;align-items:center;justify-content:space-between;gap:8px 10px;margin-bottom:12px;flex-wrap:wrap}
 .card-t{margin:0;font:700 12px/1.2 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:7px}
 .card-t svg.i{width:16px;height:16px}
@@ -1316,6 +1332,7 @@ en: {
   actNote_backpacking: 'Looks for a dry, cool 6-hour stretch with good visibility for a long trail; with a pack on, heat and strong sun tire you sooner.',
   actNote_camping: 'Scores the best 12 hours between 18:00 and 09:00: dry, light wind, a night neither too cold nor too warm. One rainy or stormy hour halves the score.',
   scrollLeft: 'Scroll left', scrollRight: 'Scroll right',
+  fsEnter: 'Full screen', fsExit: 'Exit full screen',
   autoGridLbl: 'Update the map area automatically', autoGridSub: 'After you zoom or pan, the heatmap loads for the new area by itself; when off, use the "Load this area" button',
   fadeLbl: 'Heatmap transparency', fadeSub: 'How see-through the colour layer on the map is; raise it to see the base map better',
   playSpeed: 'Map playback speed', playSpeedSub: 'How long each frame stays on screen when you press play on the map',
@@ -1471,6 +1488,7 @@ tr: {
   actNote_backpacking: 'Uzun bir parkur için 6 saatlik kuru, serin ve görüşü iyi bir aralık arar; sırtta yükle sıcak ve güçlü güneş daha çabuk yorar.',
   actNote_camping: 'Akşam 18:00 ile sabah 09:00 arasındaki en iyi 12 saati puanlar: kuru, rüzgârı hafif, gecesi ne çok soğuk ne çok sıcak. Tek bir yağmurlu ya da fırtınalı saat puanı yarıya düşürür.',
   scrollLeft: 'Sola kaydır', scrollRight: 'Sağa kaydır',
+  fsEnter: 'Tam ekran', fsExit: 'Tam ekrandan çık',
   autoGridLbl: 'Harita alanını otomatik güncelle', autoGridSub: 'Yakınlaştırıp uzaklaştırınca ya da kaydırınca ısı haritası yeni alana kendiliğinden uygulanır; kapalıyken "Bu alanı yükle" tuşu çıkar',
   fadeLbl: 'Isı haritası saydamlığı', fadeSub: 'Haritadaki renk katmanının ne kadar saydam olacağı; altlığı daha iyi görmek için artırın',
   playSpeed: 'Harita oynatma hızı', playSpeedSub: 'Haritada oynat tuşuna basınca her karenin ekranda kalma süresi',
@@ -1898,6 +1916,8 @@ const UI = {
   pin: 'M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21ZM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z',
   chev: 'M6 9l6 6 6-6',
   chevL: 'M15 6l-6 6 6 6',
+  expand: 'M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5',
+  shrink: 'M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5',
   chevR: 'M9 6l6 6-6 6',
   refresh: 'M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7',
   sliders: 'M4 7h9M17 7h3M15 4.5v5M4 17h3M11 17h9M9 14.5v5',
@@ -1952,6 +1972,60 @@ const UI = {
   adv: 'M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-3M20 16V6'
 };
 const ui = (name, cls = 'i') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${UI[name] || UI.info}"/></svg>`;
+/* Full-screen cards: a corner button (shown on hover; always faintly on touch screens) opens a card on its own.
+   Uses the Fullscreen API where it exists, otherwise (iPhone) the card covers the window. A MutationObserver puts the
+   button back whenever a card re-renders its contents. */
+const FullCard = {
+  IDS: ['hourly', 'daily', 'activities', 'advNow', 'advMap', 'advMeteo', 'advAstro', 'advMarine', 'advModels', 'advAQ', 'advEns', 'advClimate', 'advTable'],
+  card: null,
+  init() {
+    const mo = new MutationObserver(list => { for (const m of list) { const c = m.target; if (c.nodeType === 1 && c.classList.contains('card') && this.IDS.includes(c.id)) this.ensure(c); } });
+    mo.observe(document.body, { childList: true, subtree: true });
+    this.IDS.forEach(id => { const c = document.getElementById(id); if (c) this.ensure(c); });
+    for (const ev of ['fullscreenchange', 'webkitfullscreenchange']) document.addEventListener(ev, () => { if (this.card && !(document.fullscreenElement || document.webkitFullscreenElement)) this.exit(true); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && this.card && $('#backdrop').hidden) this.exit(); });
+    window.addEventListener('resize', debounce(() => { if (this.card) this.relayout(this.card); }, 120));
+  },
+  ensure(c) {
+    const on = c.classList.contains('is-full');
+    let b = c.querySelector(':scope > .fs-btn');
+    if (!b) { c.insertAdjacentHTML('beforeend', '<button class="fs-btn" type="button" data-fs></button>'); b = c.lastElementChild; }
+    const lbl = t(on ? 'fsExit' : 'fsEnter');
+    if (b.dataset.on !== String(on) || b.title !== lbl) { b.dataset.on = String(on); b.innerHTML = ui(on ? 'shrink' : 'expand'); b.title = lbl; b.setAttribute('aria-label', lbl); }
+  },
+  toggle(c) { if (!c) return; if (this.card) { const same = this.card === c; this.exit(); if (same) return; } this.enter(c); },
+  enter(c) {
+    this.card = c; c.classList.add('is-full'); document.documentElement.classList.add('fs-open'); this.ensure(c);
+    const req = c.requestFullscreen || c.webkitRequestFullscreen;
+    if (req && (document.fullscreenEnabled || document.webkitFullscreenEnabled)) { try { const r = req.call(c); if (r && r.catch) r.catch(() => {}); } catch (e) { /* stay in the window-filling mode */ } }
+    c.scrollTop = 0; this.relayout(c);
+  },
+  exit(fromBrowser) {
+    const c = this.card; if (!c) return; this.card = null;
+    c.classList.remove('is-full'); document.documentElement.classList.remove('fs-open'); this.ensure(c);
+    if (!fromBrowser && (document.fullscreenElement || document.webkitFullscreenElement)) { const x = document.exitFullscreen || document.webkitExitFullscreen; try { const r = x.call(document); if (r && r.catch) r.catch(() => {}); } catch (e) { /* ignore */ } }
+    this.relayout(c);
+    if (c.isConnected) c.scrollIntoView({ block: 'nearest' });
+  },
+  /* charts and the map size themselves to the card */
+  relayout(c) {
+    const run = () => {
+      if (typeof Charts !== 'undefined') Charts.forEach(ch => { if (c.contains(ch.host)) ch.layout(); });
+      if (c.id === 'advMap') {
+        /* full screen: the map and its time bar fill the screen; the forecast strip and note follow below */
+        const box = c.querySelector('.map-box'), tb = c.querySelector('.timebar');
+        if (box) {
+          if (c.classList.contains('is-full')) {
+            const top = box.getBoundingClientRect().top - c.getBoundingClientRect().top + c.scrollTop;
+            box.style.height = Math.max(360, Math.round(c.clientHeight - top - (tb ? tb.offsetHeight + 14 : 0) - 18)) + 'px';
+          } else box.style.height = '';
+        }
+        if (typeof MapView !== 'undefined' && MapView.map) { MapView.map.invalidateSize(); MapView.renderTicks(); MapView.selectStrip(); }
+      }
+    };
+    requestAnimationFrame(run); setTimeout(run, 250);
+  }
+};
 /* Chip rows scroll sideways with a finger, but a mouse can't reach the hidden chips.
    Arrow buttons appear at an end while chips are hidden on that side. */
 const ChipScroll = {
@@ -3454,12 +3528,14 @@ class TimeChart {
     this.layout();
   }
   destroy() { if (this.ro) this.ro.disconnect(); }
+  ph(P) { return P.h >= 60 ? Math.round(P.h * (this.hk || 1)) : P.h; }
   update(cfg) { this.cfg = cfg; this.layout(); }
   layout() {
     const cw = this.host.clientWidth; if (!cw) return;
     const n = this.cfg.times.length, ppx = this.cfg.pxPerStep || 0;
     this.W = Math.max(cw, Math.round(n * ppx) + TC.padL + TC.padR); this.CW = cw;
-    this.H = TC.top + this.cfg.panels.reduce((s, p) => s + TC.title + p.h + TC.gap, 0) - TC.gap + TC.bottom;
+    this.hk = this.host.closest('.card.is-full') ? 1.6 : 1;   /* taller panels when the card is full screen */
+    this.H = TC.top + this.cfg.panels.reduce((s, p) => s + TC.title + this.ph(p) + TC.gap, 0) - TC.gap + TC.bottom;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     for (const [c, w] of [[this.cv, this.W], [this.over, this.W], [this.axis, cw]]) { c.width = Math.round(w * dpr); c.height = Math.round(this.H * dpr); c.style.width = w + 'px'; c.style.height = this.H + 'px'; }
     this.inner.style.width = this.W + 'px';
@@ -3478,14 +3554,14 @@ class TimeChart {
     for (let i = 0; i < n; i++) { const p = TZ.parts(T[i]); if (i === 0 || p.key !== TZ.parts(T[i - 1]).key) days.push({ i, x: X(T[i]), tt: T[i], h: p.h }); }
     let y = TC.top; this.rects = [];
     for (const P of cfg.panels) {
-      const top = y + TC.title, bot = top + P.h, ptop = top + (P.topPad || 4);
+      const top = y + TC.title, bot = top + this.ph(P), ptop = top + (P.topPad || 4);
       let lo = Infinity, hi = -Infinity;
       for (const s of P.series) { if (s.axis === 'right' || s.type === 'strip' || s.type === 'icons' || s.type === 'arrows' || s.noScale) continue; for (const arr of [s.data, s.data2, s.stackOn && s.data ? s.data.map((v, i) => (isNum(v) ? v + (s.stackOn[i] || 0) : null)) : null]) if (arr) for (const v of arr) if (isNum(v)) { if (v < lo) lo = v; if (v > hi) hi = v; } }
       if (lo === Infinity) { lo = 0; hi = 1; }
       if (P.include) for (const v of P.include) { if (v < lo) lo = v; if (v > hi) hi = v; }
       if (P.fixed) { lo = P.fixed[0]; hi = P.fixed[1]; }
       else { const pad = (hi - lo) * 0.08 || Math.abs(hi) * 0.1 || 1; if (!P.zeroBase || lo < 0) lo -= pad; hi += pad; if (P.zeroBase && lo > 0) lo = 0; }
-      const ticks = niceTicks(lo, hi, Math.max(2, Math.floor(P.h / 32)));
+      const ticks = niceTicks(lo, hi, Math.max(2, Math.floor(this.ph(P) / 32)));
       const Y = v => bot - (v - lo) / (hi - lo) * (bot - ptop);
       let Y2 = null, ticks2 = null, r2 = null;
       if (P.right) {
@@ -5050,6 +5126,7 @@ function bindEvents() {
     if (d.mode) return setMode(d.mode);
     if (d.hstep) { S.hourStep = +d.hstep; saveSettings(); return renderHourly(); }
     if (d.dv) { S.dailyView = d.dv; saveSettings(); return renderDaily(); }
+    if (d.fs !== undefined) return FullCard.toggle(el.closest('.card'));
     if (d.chips) return ChipScroll.step(el);
     if (d.strip) return MapView.stripPage(+d.strip);
     if (d.actId) { S.activity = d.actId; saveSettings(); return renderActivities(); }
@@ -5129,7 +5206,7 @@ async function firstRun() {
 function init() {
   applyLang(); applyTheme(); setStaticTexts();
   $('#heroIso').innerHTML = isobarSvg();
-  HeroFX.init(); makeTouchIcon(); bindEvents();
+  HeroFX.init(); makeTouchIcon(); bindEvents(); FullCard.init();
   const fromHash = parseHash(), last = Store.get('lastLoc', null);
   Net.listeners.add(debounce(() => { if (App.mode === 'advanced' && App.data && $('#advSources')) renderSources(); }, 600));
   if (fromHash) {

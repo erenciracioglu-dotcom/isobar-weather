@@ -64,12 +64,14 @@ class TimeChart {
     this.layout();
   }
   destroy() { if (this.ro) this.ro.disconnect(); }
+  ph(P) { return P.h >= 60 ? Math.round(P.h * (this.hk || 1)) : P.h; }
   update(cfg) { this.cfg = cfg; this.layout(); }
   layout() {
     const cw = this.host.clientWidth; if (!cw) return;
     const n = this.cfg.times.length, ppx = this.cfg.pxPerStep || 0;
     this.W = Math.max(cw, Math.round(n * ppx) + TC.padL + TC.padR); this.CW = cw;
-    this.H = TC.top + this.cfg.panels.reduce((s, p) => s + TC.title + p.h + TC.gap, 0) - TC.gap + TC.bottom;
+    this.hk = this.host.closest('.card.is-full') ? 1.6 : 1;   /* taller panels when the card is full screen */
+    this.H = TC.top + this.cfg.panels.reduce((s, p) => s + TC.title + this.ph(p) + TC.gap, 0) - TC.gap + TC.bottom;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     for (const [c, w] of [[this.cv, this.W], [this.over, this.W], [this.axis, cw]]) { c.width = Math.round(w * dpr); c.height = Math.round(this.H * dpr); c.style.width = w + 'px'; c.style.height = this.H + 'px'; }
     this.inner.style.width = this.W + 'px';
@@ -88,14 +90,14 @@ class TimeChart {
     for (let i = 0; i < n; i++) { const p = TZ.parts(T[i]); if (i === 0 || p.key !== TZ.parts(T[i - 1]).key) days.push({ i, x: X(T[i]), tt: T[i], h: p.h }); }
     let y = TC.top; this.rects = [];
     for (const P of cfg.panels) {
-      const top = y + TC.title, bot = top + P.h, ptop = top + (P.topPad || 4);
+      const top = y + TC.title, bot = top + this.ph(P), ptop = top + (P.topPad || 4);
       let lo = Infinity, hi = -Infinity;
       for (const s of P.series) { if (s.axis === 'right' || s.type === 'strip' || s.type === 'icons' || s.type === 'arrows' || s.noScale) continue; for (const arr of [s.data, s.data2, s.stackOn && s.data ? s.data.map((v, i) => (isNum(v) ? v + (s.stackOn[i] || 0) : null)) : null]) if (arr) for (const v of arr) if (isNum(v)) { if (v < lo) lo = v; if (v > hi) hi = v; } }
       if (lo === Infinity) { lo = 0; hi = 1; }
       if (P.include) for (const v of P.include) { if (v < lo) lo = v; if (v > hi) hi = v; }
       if (P.fixed) { lo = P.fixed[0]; hi = P.fixed[1]; }
       else { const pad = (hi - lo) * 0.08 || Math.abs(hi) * 0.1 || 1; if (!P.zeroBase || lo < 0) lo -= pad; hi += pad; if (P.zeroBase && lo > 0) lo = 0; }
-      const ticks = niceTicks(lo, hi, Math.max(2, Math.floor(P.h / 32)));
+      const ticks = niceTicks(lo, hi, Math.max(2, Math.floor(this.ph(P) / 32)));
       const Y = v => bot - (v - lo) / (hi - lo) * (bot - ptop);
       let Y2 = null, ticks2 = null, r2 = null;
       if (P.right) {
