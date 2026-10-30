@@ -378,7 +378,7 @@ const FullCard = {
   IDS: ['hourly', 'daily', 'activities', 'advNow', 'advMap', 'advMeteo', 'advAstro', 'advMarine', 'advModels', 'advAQ', 'advEns', 'advClimate', 'advTable'],
   card: null,
   init() {
-    const mo = new MutationObserver(list => { for (const m of list) { const c = m.target; if (c.nodeType === 1 && c.classList.contains('card') && this.IDS.includes(c.id)) this.ensure(c); } });
+    const mo = new MutationObserver(list => { for (const m of list) { const c = m.target; if (c.nodeType === 1 && c.classList.contains('card') && this.IDS.includes(c.id)) { this.ensure(c); if (c === this.card) this.scheduleFit(); } } });
     mo.observe(document.body, { childList: true, subtree: true });
     this.IDS.forEach(id => { const c = document.getElementById(id); if (c) this.ensure(c); });
     for (const ev of ['fullscreenchange', 'webkitfullscreenchange']) document.addEventListener(ev, () => { if (this.card && !(document.fullscreenElement || document.webkitFullscreenElement)) this.exit(true); });
@@ -407,9 +407,23 @@ const FullCard = {
     if (c.isConnected) c.scrollIntoView({ block: 'nearest' });
   },
   /* charts and the map size themselves to the card */
+  /* charts in a full-screen card grow until the card's content fills the screen (up to 8x their usual height) */
+  fit(c) {
+    if (typeof Charts === 'undefined') return;
+    const list = []; Charts.forEach(ch => { if (ch.host.isConnected && c.contains(ch.host)) list.push(ch); });
+    if (!list.length) return;
+    list.forEach(ch => { ch.fitK = 1; ch.layout(); });
+    if (!c.classList.contains('is-full')) return;
+    const cs = getComputedStyle(c), padB = parseFloat(cs.paddingBottom) || 0;
+    let bottom = 0;
+    for (const el of c.children) { const ps = getComputedStyle(el); if (ps.position === 'absolute' || ps.position === 'fixed' || el.offsetParent === null) continue; bottom = Math.max(bottom, el.offsetTop + el.offsetHeight + (parseFloat(ps.marginBottom) || 0)); }
+    const free = c.clientHeight - padB - bottom - 6, S = list.reduce((s, ch) => s + ch.scalableH(), 0);
+    if (free > 8 && S > 0) { const k = Math.min(8, 1 + free / S); list.forEach(ch => { ch.fitK = k; ch.layout(); }); }
+  },
+  scheduleFit() { clearTimeout(this._fitT); this._fitT = setTimeout(() => { if (this.card) this.fit(this.card); }, 60); },
   relayout(c) {
     const run = () => {
-      if (typeof Charts !== 'undefined') Charts.forEach(ch => { if (c.contains(ch.host)) ch.layout(); });
+      this.fit(c);
       if (c.id === 'advMap') {
         /* full screen: the map and its time bar fill the screen; the forecast strip and note follow below */
         const box = c.querySelector('.map-box'), tb = c.querySelector('.timebar');

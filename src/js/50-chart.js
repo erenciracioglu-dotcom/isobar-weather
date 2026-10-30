@@ -65,12 +65,13 @@ class TimeChart {
   }
   destroy() { if (this.ro) this.ro.disconnect(); }
   ph(P) { return P.h >= 60 ? Math.round(P.h * (this.hk || 1)) : P.h; }
-  update(cfg) { this.cfg = cfg; this.layout(); }
+  scalableH() { return this.cfg.panels.reduce((s, P) => s + (P.h >= 60 ? P.h : 0), 0); }
+  update(cfg) { this.cfg = cfg; this.layout(); if (this.host.closest('.card.is-full')) FullCard.scheduleFit(); }
   layout() {
     const cw = this.host.clientWidth; if (!cw) return;
     const n = this.cfg.times.length, ppx = this.cfg.pxPerStep || 0;
     this.W = Math.max(cw, Math.round(n * ppx) + TC.padL + TC.padR); this.CW = cw;
-    this.hk = this.host.closest('.card.is-full') ? 1.6 : 1;   /* taller panels when the card is full screen */
+    this.hk = this.host.closest('.card.is-full') ? (this.fitK || 1) : 1;   /* full screen: FullCard.fit() sets fitK so the card fills the screen */
     this.H = TC.top + this.cfg.panels.reduce((s, p) => s + TC.title + this.ph(p) + TC.gap, 0) - TC.gap + TC.bottom;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     for (const [c, w] of [[this.cv, this.W], [this.over, this.W], [this.axis, cw]]) { c.width = Math.round(w * dpr); c.height = Math.round(this.H * dpr); c.style.width = w + 'px'; c.style.height = this.H + 'px'; }
